@@ -46,11 +46,11 @@ class Tipoexame extends AppModel {
      * hasMany associations
      */
     public $hasMany = array(
-        'Categoriatipoexame' => array(
-            'className' => 'Categoriatipoexame',
-            'foreignKey' => 'tipoexame_id',
-            'dependent' => false,
-        ),
+//        'Categoriatipoexame' => array(
+//            'className' => 'Categoriatipoexame',
+//            'foreignKey' => 'tipoexame_id',
+//            'dependent' => false,
+//        ),
     );
 
 }

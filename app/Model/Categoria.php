@@ -56,14 +56,14 @@ class Categoria extends AppModel {
      * hasAndBelongsToMany associations
      */
     public $hasAndBelongsToMany = array(
-        'Tipoexame' =>
-        array(
-            'className' => 'Tipoexame',
-            'joinTable' => 'categoriatipoexames',
-            'foreignKey' => 'categoria_id',
-            'associationForeignKey' => 'tipoexame_id',
-            'order' => 'Tipoexame.descricao',
-        )
+//        'Tipoexame' =>
+//        array(
+//            'className' => 'Tipoexame',
+//            'joinTable' => 'categoriatipoexames',
+//            'foreignKey' => 'categoria_id',
+//            'associationForeignKey' => 'tipoexame_id',
+//            'order' => 'Tipoexame.descricao',
+//        )
     );
 
 }

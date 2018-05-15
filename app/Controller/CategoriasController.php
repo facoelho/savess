@@ -108,10 +108,10 @@ class CategoriasController extends AppController {
             'order' => array('descricao')));
         $this->set(compact('categorias_pai'));
 
-        $tipoexames = $this->Categoria->Tipoexame->find('list', array('fields' => array('id', 'descricao'),
-            'conditions' => array('empresa_id' => $empresa_id),
-            'order' => array('descricao')));
-        $this->set(compact('tipoexames'));
+//        $tipoexames = $this->Categoria->Tipoexame->find('list', array('fields' => array('id', 'descricao'),
+//            'conditions' => array('empresa_id' => $empresa_id),
+//            'order' => array('descricao')));
+//        $this->set(compact('tipoexames'));
 
         $tipo = array('S' => 'Saida', 'E' => 'Entrada', 'R' => 'Retirada');
         $this->set(compact('tipo'));
@@ -146,10 +146,10 @@ class CategoriasController extends AppController {
             'conditions' => array('empresa_id' => $empresa_id, 'categoria_pai_id IS NULL')));
         $this->set(compact('categorias_pai'));
 
-        $tipoexames = $this->Categoria->Tipoexame->find('list', array('fields' => array('id', 'descricao'),
-            'conditions' => array('empresa_id' => $empresa_id),
-            'order' => array('descricao')));
-        $this->set(compact('tipoexames'));
+//        $tipoexames = $this->Categoria->Tipoexame->find('list', array('fields' => array('id', 'descricao'),
+//            'conditions' => array('empresa_id' => $empresa_id),
+//            'order' => array('descricao')));
+//        $this->set(compact('tipoexames'));
 
         $ativo = array('S' => 'Ativo', 'N' => 'Inativo');
         $this->set(compact('ativo'));

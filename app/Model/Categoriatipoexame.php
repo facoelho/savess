@@ -7,20 +7,20 @@ class Categoriatipoexame extends AppModel {
      *
      */
     public $belongsTo = array(
-        'Categoria' => array(
-            'className' => 'Categoria',
-            'foreignKey' => 'categoria_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        ),
-        'Tipoexame' => array(
-            'className' => 'Tipoexame',
-            'foreignKey' => 'tipoexame_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        ),
+//        'Categoria' => array(
+//            'className' => 'Categoria',
+//            'foreignKey' => 'categoria_id',
+//            'conditions' => '',
+//            'fields' => '',
+//            'order' => ''
+//        ),
+//        'Tipoexame' => array(
+//            'className' => 'Tipoexame',
+//            'foreignKey' => 'tipoexame_id',
+//            'conditions' => '',
+//            'fields' => '',
+//            'order' => ''
+//        ),
     );
 
 }

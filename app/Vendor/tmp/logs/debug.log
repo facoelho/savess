@@ -1,0 +1,699 @@
+2016-01-13 16:26:41 Debug: Notice (8): Undefined variable: validaPlano in [C:\xampp\htdocs\savemed\app\View\Empresas\index.ctp, line 2]
+Trace:
+include - APP\View\Empresas\index.ctp, line 2
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::render() - CORE\Cake\View\View.php, line 471
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 194
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-13 16:26:47 Debug: Notice (8): Undefined variable: validaPlano in [C:\xampp\htdocs\savemed\app\View\Empresas\index.ctp, line 2]
+Trace:
+include - APP\View\Empresas\index.ctp, line 2
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::render() - CORE\Cake\View\View.php, line 471
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 194
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:08:20 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:08:46 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:02 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:10 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:26 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:28 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:32 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:41 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:42 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:43 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:09:59 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:11:16 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:11:39 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:12:49 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:12:55 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:14:15 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-01-18 20:14:22 Debug: Notice (8): Undefined variable: especialista_id in [C:\xampp\htdocs\savemed\app\Controller\AgendasController.php, line 80]
+Trace:
+AgendasController::index() - APP\Controller\AgendasController.php, line 80
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE\Cake\Controller\Controller.php, line 486
+Dispatcher::_invoke() - CORE\Cake\Routing\Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE\Cake\Routing\Dispatcher.php, line 162
+[main] - APP\webroot\index.php, line 111
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 10]
+Trace:
+include - APP\View\Layouts\default.ctp, line 10
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined variable: menuCarregado in [C:\xampp\htdocs\savemed\app\View\Elements\menu.ctp, line 14]
+Trace:
+include - APP\View\Elements\menu.ctp, line 14
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::_renderElement() - CORE\Cake\View\View.php, line 1208
+View::element() - CORE\Cake\View\View.php, line 414
+include - APP\View\Layouts\default.ctp, line 43
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 55]
+Trace:
+include - APP\View\Layouts\default.ctp, line 55
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 63]
+Trace:
+include - APP\View\Layouts\default.ctp, line 63
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 82]
+Trace:
+include - APP\View\Layouts\default.ctp, line 82
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 84]
+Trace:
+include - APP\View\Layouts\default.ctp, line 84
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:39 Debug: Notice (8): Undefined index: empresasCombo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 87]
+Trace:
+include - APP\View\Layouts\default.ctp, line 87
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 10]
+Trace:
+include - APP\View\Layouts\default.ctp, line 10
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined variable: menuCarregado in [C:\xampp\htdocs\savemed\app\View\Elements\menu.ctp, line 14]
+Trace:
+include - APP\View\Elements\menu.ctp, line 14
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::_renderElement() - CORE\Cake\View\View.php, line 1208
+View::element() - CORE\Cake\View\View.php, line 414
+include - APP\View\Layouts\default.ctp, line 43
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 55]
+Trace:
+include - APP\View\Layouts\default.ctp, line 55
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 63]
+Trace:
+include - APP\View\Layouts\default.ctp, line 63
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 82]
+Trace:
+include - APP\View\Layouts\default.ctp, line 82
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 84]
+Trace:
+include - APP\View\Layouts\default.ctp, line 84
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:44 Debug: Notice (8): Undefined index: empresasCombo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 87]
+Trace:
+include - APP\View\Layouts\default.ctp, line 87
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 10]
+Trace:
+include - APP\View\Layouts\default.ctp, line 10
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined variable: menuCarregado in [C:\xampp\htdocs\savemed\app\View\Elements\menu.ctp, line 14]
+Trace:
+include - APP\View\Elements\menu.ctp, line 14
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::_renderElement() - CORE\Cake\View\View.php, line 1208
+View::element() - CORE\Cake\View\View.php, line 414
+include - APP\View\Layouts\default.ctp, line 43
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 55]
+Trace:
+include - APP\View\Layouts\default.ctp, line 55
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 63]
+Trace:
+include - APP\View\Layouts\default.ctp, line 63
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 82]
+Trace:
+include - APP\View\Layouts\default.ctp, line 82
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 84]
+Trace:
+include - APP\View\Layouts\default.ctp, line 84
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 11:04:49 Debug: Notice (8): Undefined index: empresasCombo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 87]
+Trace:
+include - APP\View\Layouts\default.ctp, line 87
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error500() - CORE\Cake\Error\ExceptionRenderer.php, line 245
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 10]
+Trace:
+include - APP\View\Layouts\default.ctp, line 10
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined variable: menuCarregado in [C:\xampp\htdocs\savemed\app\View\Elements\menu.ctp, line 12]
+Trace:
+include - APP\View\Elements\menu.ctp, line 12
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::_renderElement() - CORE\Cake\View\View.php, line 1208
+View::element() - CORE\Cake\View\View.php, line 414
+include - APP\View\Layouts\default.ctp, line 43
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 55]
+Trace:
+include - APP\View\Layouts\default.ctp, line 55
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: empresa_tipologo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 63]
+Trace:
+include - APP\View\Layouts\default.ctp, line 63
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 82]
+Trace:
+include - APP\View\Layouts\default.ctp, line 82
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: User in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 83]
+Trace:
+include - APP\View\Layouts\default.ctp, line 83
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: nomeEmpresa in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 84]
+Trace:
+include - APP\View\Layouts\default.ctp, line 84
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+
+2016-04-23 21:06:58 Debug: Notice (8): Undefined index: empresasCombo in [C:\xampp\htdocs\savemed\app\View\Layouts\default.ctp, line 87]
+Trace:
+include - APP\View\Layouts\default.ctp, line 87
+View::_evaluate() - CORE\Cake\View\View.php, line 945
+View::_render() - CORE\Cake\View\View.php, line 907
+View::renderLayout() - CORE\Cake\View\View.php, line 535
+View::render() - CORE\Cake\View\View.php, line 479
+Controller::render() - CORE\Cake\Controller\Controller.php, line 948
+ExceptionRenderer::_outputMessage() - CORE\Cake\Error\ExceptionRenderer.php, line 276
+ExceptionRenderer::error400() - CORE\Cake\Error\ExceptionRenderer.php, line 222
+ExceptionRenderer::render() - CORE\Cake\Error\ExceptionRenderer.php, line 178
+ErrorHandler::handleException() - CORE\Cake\Error\ErrorHandler.php, line 123
+[main] - [internal], line ??
+

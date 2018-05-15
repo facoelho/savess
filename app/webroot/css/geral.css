@@ -1,0 +1,29 @@
+body {
+	background: #ddd;
+	font: 12px Verdana, Geneva, Arial, Helvetica, sans-serif;
+}
+#layout {
+	margin: 20px auto;
+	background: #fff;
+	width: 800px;
+}
+#navegacao, #rodape {
+	background: #333;
+	padding: 8px 10px;
+	color: #fff;
+}
+#navegacao a {
+	color: #fff;
+	text-decoration: none;
+	font-size: 14px;
+	margin: 0 15px;
+}
+#conteudo {
+	padding: 5px 20px;
+}
+#conteudo h2 {
+	margin: 0;
+}
+#rodape {
+	font-size: 11px;
+}

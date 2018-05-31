@@ -1049,4 +1049,7 @@ class CaixasController extends AppController {
 
             $this->set(compact('column_chart'));
         }
+    }
+
+}
 

@@ -11,7 +11,7 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
     echo $this->Form->input('descricao');
     echo $this->Form->input('categorias_pai', array('id' => 'categorias_paiID', 'type' => 'select', 'options' => $categorias_pai, 'label' => 'Categoria pai', 'empty' => '-- Selecione a categoria pai --'));
     echo $this->Form->input('categoria_id', array('id' => 'categoriaID', 'type' => 'select', 'label' => 'Categorias'));
-    echo $this->Form->input('tipoexame_id', array('id' => 'tipoexameID', 'type' => 'select', 'label' => 'Tipos de exame', 'empty' => '-- Selecione o tipo de exame --'));
+//    echo $this->Form->input('tipoexame_id', array('id' => 'tipoexameID', 'type' => 'select', 'label' => 'Tipos de exame', 'empty' => '-- Selecione o tipo de exame --'));
 //    echo $this->Form->input('tipo', array('id' => 'tipoID', 'type' => 'select', 'options' => $tipo, 'label' => 'Tipo do lançamento'));
     echo $this->Form->input('valor', array('id' => 'valorID', 'type' => 'text', 'label' => 'Valor do lançamento'));
     echo $this->Form->input('empresa_id', array('type' => 'hidden', 'value' => $empresa_id));
@@ -37,16 +37,16 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
             });
         });
 
-        $("#categoriaID").change(function() {
-            $.ajax({async: true,
-                data: $("#categoriaID").serialize(),
-                dataType: "html",
-                success: function(data, textStatus) {
-                    $("#tipoexameID").html(data);
-                },
-                type: "post",
-                url: "\/savess_cap/Tipoexames\/buscaTipoexames\/Lancamento\/" + $("#categoriaID option:selected").val()
-            });
-        });
+//        $("#categoriaID").change(function() {
+//            $.ajax({async: true,
+//                data: $("#categoriaID").serialize(),
+//                dataType: "html",
+//                success: function(data, textStatus) {
+//                    $("#tipoexameID").html(data);
+//                },
+//                type: "post",
+//                url: "\/savess_cap/Tipoexames\/buscaTipoexames\/Lancamento\/" + $("#categoriaID option:selected").val()
+//            });
+//        });
     });
 </script>

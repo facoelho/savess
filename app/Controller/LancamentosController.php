@@ -82,7 +82,7 @@ class LancamentosController extends AppController {
         $this->set(compact('tipo'));
 
         $categorias_pai = $this->Lancamento->Categoria->find('list', array('fields' => array('id', 'descricao'),
-            'conditions' => array('empresa_id' => $empresa_id, 'categoria_pai_id IS NULL'),
+            'conditions' => array('empresa_id' => $empresa_id, 'categoria_pai_id IS NULL', 'ativo' => 'S'),
             'order' => array('descricao')));
         $this->set('categorias_pai', $categorias_pai);
 

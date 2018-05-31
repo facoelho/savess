@@ -8,9 +8,9 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
     <?php
     echo $this->Form->input('dtcaixa', array('id' => 'dtcaixa', 'class' => 'data', 'type' => 'text', 'label' => 'Data do caixa'));
     if (empty($saldo)) {
-        echo $this->Form->input('saldo', array('id' => 'saldoID', 'type' => 'text', 'label' => 'Saldo do caixa'));
+        echo $this->Form->input('saldo', array('id' => 'saldoID', 'type' => 'hidden', 'label' => 'Saldo do caixa'));
     } else {
-        echo $this->Form->input('saldo', array('id' => 'saldo', 'type' => 'text', 'label' => 'Saldo do caixa', 'value' => $saldo[0][0]['saldo'], 'readonly'));
+        echo $this->Form->input('saldo', array('id' => 'saldo', 'type' => 'hidden', 'label' => 'Saldo do caixa', 'value' => $saldo[0][0]['saldo'], 'readonly'));
     }
     echo $this->Form->input('empresa_id', array('type' => 'hidden', 'value' => $empresa_id));
     ?>

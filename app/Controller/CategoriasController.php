@@ -203,7 +203,7 @@ class CategoriasController extends AppController {
         $categorias = $this->Categoria->find('list', array('order' => 'descricao ASC',
             'fields' => array('Categoria.id', 'Categoria.descricao'),
             'conditions' => array('Categoria.categoria_pai_id' => $categoria_paiID,
-                'Categoria.empresa_id' => $empresa_id)));
+                'Categoria.empresa_id' => $empresa_id, 'Categoria.ativo' => 'S')));
         $this->set('categorias', $categorias);
     }
 

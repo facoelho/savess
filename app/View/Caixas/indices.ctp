@@ -42,7 +42,7 @@
                     $("#categoriaID").html(data);
                 },
                 type: "post",
-                url: "\/savess_cap\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
+                url: "\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
             });
         });
 //        $("#categoriaID").change(function() {

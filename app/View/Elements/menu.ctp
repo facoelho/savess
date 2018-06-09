@@ -8,12 +8,16 @@
         $menu_4 = 0;
         $menu_5 = 0;
         $menu_6 = 0;
+        $menu_7 = 0;
+        $menu_8 = 0;
+        $menu_9 = 0;
+        $menu_10 = 0;
 
         foreach ($menuCarregado as $itemMenu):
 
             if ($itemMenu['Menu']['menu'] == 1 && $menu_1 == 0) {
                 ?>
-                <li><a href="http://www.savess.com.br/sistema/Menus/montamenu/1">CADASTROS</a>
+                <li><a href="http://www.savess.com.br/Menus/montamenu/1">CADASTROS</a>
                     <ul>
                         <?php
                         $menu_1++;
@@ -25,7 +29,7 @@
                     <?php
                 }
                 ?>
-                <li><a href="http://www.savess.com.br/calendario/full_calendar">TESOURARIA</a>
+                <li><a href="http://www.savess.com.br/Menus/montamenu/2">TESOURARIA</a>
                     <ul>
                         <?php
                         $menu_2++;
@@ -37,7 +41,7 @@
                     <?php
                 }
                 ?>
-                <li><a href="http://www.savess.com.br/sistema/Menus/montamenu/3">CONSULTAS</a>
+                <li><a href="http://www.savess.com.br/Menus/montamenu/3">CONSULTAS</a>
                     <ul>
                         <?php
                         $menu_3++;
@@ -45,7 +49,7 @@
                         ?>
                     </ul>
                 </li>
-                <li><a href="http://www.savess.com.br/sistema/Menus/montamenu/4">ARQUIVOS</a>
+                <li><a href="http://www.savess.com.br/Menus/montamenu/4">ARQUIVOS</a>
                     <ul>
                         <?php
                         $menu_4++;
@@ -53,7 +57,7 @@
                         ?>
                     </ul>
                 </li>
-                <li><a href="http://www.savess.com.br/sistema/Menus/montamenu/5">RELATÓRIOS</a>
+                <li><a href="http://www.savess.com.br/Menus/montamenu/5">RELATÓRIOS</a>
                     <ul>
                         <?php
                         $menu_5++;
@@ -61,7 +65,7 @@
                         ?>
                     </ul>
                 </li>
-                <li><a href="http://www.savess.com.br/sistema/Menus/montamenu/6">AJUSTES</a>
+                <li><a href="http://www.savess.com.br/Menus/montamenu/6">AJUSTES</a>
                     <ul>
                         <?php
                         $menu_6++;

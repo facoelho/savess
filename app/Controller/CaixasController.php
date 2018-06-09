@@ -26,11 +26,37 @@ class CaixasController extends AppController {
      */
     public function index() {
         $dadosUser = $this->Session->read();
+
         $this->Caixa->recursive = -1;
+
+        $this->Filter->addFilters(
+                array(
+                    'filter1' => array(
+                        'Lancamento.descricao' => array(
+                            'operator' => 'ILIKE',
+                            'value' => array(
+                                'before' => '%',
+                                'after' => '%'
+                            )
+                        )
+                    ),
+                )
+        );
         $this->Paginator->settings = array(
+            'joins' => array(
+                array(
+                    'table' => 'lancamentos',
+                    'alias' => 'Lancamento',
+                    'type' => 'LEFT',
+                    'conditions' => array('Lancamento.caixa_id = Caixa.id')
+                )
+            ),
             'conditions' => array('empresa_id' => $dadosUser['empresa_id']),
             'order' => array('dtcaixa' => 'desc')
         );
+
+        $this->Filter->setPaginate('conditions', array($this->Filter->getConditions()));
+
         $this->set('caixas', $this->Paginator->paginate('Caixa'));
     }
 
@@ -66,42 +92,42 @@ class CaixasController extends AppController {
         $empresa_id = $dadosUser['empresa_id'];
         $this->set(compact('empresa_id'));
 
-        $valida_caixa = $this->Caixa->query('select max(dtcaixa) as dtcaixa from public.caixas where empresa_id = ' . $empresa_id);
-
-        if (!empty($valida_caixa[0][0]['dtcaixa'])) {
-            $saldo = $this->Caixa->query('select saldo from public.caixas where empresa_id = ' . $empresa_id . ' and dtcaixa = ' . "'" . $valida_caixa[0][0]['dtcaixa'] . "'");
-            $this->set(compact('saldo'));
-        }
+//        $valida_caixa = $this->Caixa->query('select max(dtcaixa) as dtcaixa from public.caixas where empresa_id = ' . $empresa_id);
+//
+//        if (!empty($valida_caixa[0][0]['dtcaixa'])) {
+//            $saldo = $this->Caixa->query('select saldo from public.caixas where empresa_id = ' . $empresa_id . ' and dtcaixa = ' . "'" . $valida_caixa[0][0]['dtcaixa'] . "'");
+//            $this->set(compact('saldo'));
+//        }
 
         if ($this->request->is('post')) {
 
-            $valida_caixa = $this->Caixa->find('list', array(
-                'conditions' => array('empresa_id' => $empresa_id,
-                    'dtcaixa <=' . "'" . substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2) . "'" . '
-                    and status = ' . "'A'",
-            )));
-
-            if (!empty($valida_caixa)) {
-                $this->Session->setFlash('É necessário fechar o caixa anterior!', 'default', array('class' => 'mensagem_erro'));
-                return;
-            }
-
-            $valida_caixa = $this->Caixa->find('list', array(
-                'conditions' => array('empresa_id' => $empresa_id,
-                    'dtcaixa >=' . "'" . substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2) . "'",
-            )));
-
-            if (!empty($valida_caixa)) {
-                $this->Session->setFlash('Existe caixa aberto com data maior do que a informada!', 'default', array('class' => 'mensagem_erro'));
-                return;
-            }
+//            $valida_caixa = $this->Caixa->find('list', array(
+//                'conditions' => array('empresa_id' => $empresa_id,
+//                    'dtcaixa <=' . "'" . substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2) . "'" . '
+//                    and status = ' . "'A'",
+//            )));
+//
+//            if (!empty($valida_caixa)) {
+//                $this->Session->setFlash('É necessário fechar o caixa anterior!', 'default', array('class' => 'mensagem_erro'));
+//                return;
+//            }
+//
+//            $valida_caixa = $this->Caixa->find('list', array(
+//                'conditions' => array('empresa_id' => $empresa_id,
+//                    'dtcaixa >=' . "'" . substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2) . "'",
+//            )));
+//
+//            if (!empty($valida_caixa)) {
+//                $this->Session->setFlash('Existe caixa aberto com data maior do que a informada!', 'default', array('class' => 'mensagem_erro'));
+//                return;
+//            }
 
             $this->Caixa->create();
 
             $this->request->data['Caixa']['user_id'] = $dadosUser['Auth']['User']['id'];
             $this->request->data['Caixa']['created'] = date('Y-m-d h:i:s');
             $this->request->data['Caixa']['dtcaixa'] = substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2);
-//            $this->request->data['Caixa']['saldo'] = str_replace(',', '.', $this->request->data['Caixa']['saldo']);
+            $this->request->data['Caixa']['saldo'] = 0;
 
             if ($this->Caixa->save($this->request->data)) {
 
@@ -207,7 +233,7 @@ class CaixasController extends AppController {
         $dadosUser = $this->Session->read();
         $this->Caixa->recursive = 0;
         $this->Paginator->settings = array(
-            'fields' => array('Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Lancamento.descricao', 'Lancamento.valor', 'Lancamento.saldo', 'Lancamento.created', 'User.id', 'User.nome', 'User.sobrenome', 'Categoria.descricao', 'Tipoexame.descricao'),
+            'fields' => array('Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Lancamento.id', 'Lancamento.descricao', 'Lancamento.valor', 'Lancamento.saldo', 'Lancamento.created', 'User.id', 'User.nome', 'User.sobrenome', 'Categoria.descricao', 'Categoria.tipo', 'Tipoexame.descricao'),
             'joins' => array(
                 array(
                     'table' => 'lancamentos',
@@ -238,6 +264,8 @@ class CaixasController extends AppController {
             'order' => array('Caixa.dtlancamento' => 'asc')
         );
         $this->set('lancamentos', $this->Paginator->paginate('Caixa'));
+
+        $this->set('id', $id);
     }
 
     /**
@@ -257,15 +285,14 @@ class CaixasController extends AppController {
             'order' => array('descricao')));
         $this->set('categorias_pai', $categorias_pai);
 
-
-        $tipografico = array('B' => 'Barras', 'L' => 'Linhas', 'P' => 'Pizza');
-        $this->set('tipografico', $tipografico);
+        $tipo = array('E' => 'Entradas', 'S' => 'Saídas', 'R' => 'Retiradas');
+        $this->set('tipo', $tipo);
 
         if ($this->request->is('post') || $this->request->is('put')) {
-//            if (empty($this->request->data['Relatorio']['categorias_pai'])) {
-//                $this->Session->setFlash('Campo categoria pai é obrigatório.', 'default', array('class' => 'mensagem_erro'));
-//                return;
-//            }
+            if ((empty($this->request->data['Relatorio']['dtdespesa_inicio'])) or (empty($this->request->data['Relatorio']['dtdespesa_fim']))) {
+                $this->Session->setFlash('Período obrigatório.', 'default', array('class' => 'mensagem_erro'));
+                return;
+            }
             CakeSession::write('relatorio', $this->request->data);
 //            if ($this->request->data['Relatorio']['tipografico'] == 'B') {
             $this->redirect(array('action' => 'relatorio_indices'));
@@ -296,6 +323,10 @@ class CaixasController extends AppController {
             $categoria_id = '';
         }
 
+        if (!empty($indices['Relatorio']['tipo'])) {
+            $tipo = $indices['Relatorio']['tipo'];
+        }
+
         if (!empty($indices['Tipoexame']['Tipoexame'])) {
             foreach ($indices['Tipoexame']['Tipoexame'] as $key => $item) :
                 if (empty($exames)) {
@@ -309,8 +340,24 @@ class CaixasController extends AppController {
         if (empty($categorias_pai)) {
 
             //Relatório Valor Total X categoria
-
-            $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+                                                 from categorias,
+                                                      lancamentos,
+                                                      caixas,
+                                                      categorias as categoriapai
+                                                where caixas.id = lancamentos.caixa_id
+                                                  and categoriapai.id = categorias.categoria_pai_id
+                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                  and caixas.empresa_id = ' . $empresa_id . '
+                                                  and lancamentos.categoria_id = categorias.id
+                                                  and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                         categoriapai.descricao
+                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                         sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
                                                  from categorias,
                                                       lancamentos,
                                                       caixas,
@@ -324,11 +371,12 @@ class CaixasController extends AppController {
                                                          categoriapai.descricao
                                                 order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
                                                          sum(valor) desc');
+            }
 
             $columns['data'] = array('type' => 'string', 'label' => 'Data');
             foreach ($result as $key => $item) :
                 $columns[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
-                $columns[] = array('type' => 'number', 'role' => 'annotation');
+//                $columns[] = array('type' => 'number', 'role' => 'annotation');
             endforeach;
 
             $column_chart = new GoogleCharts();
@@ -345,40 +393,72 @@ class CaixasController extends AppController {
 
             $column_chart->columns($columns);
 
-            $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas,
-                                                 categorias as categoriapai
-                                           where caixas.id = lancamentos.caixa_id
-                                             and categoriapai.id = categorias.categoria_pai_id
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
-
+            if (!empty($tipo)) {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas,
+                                                     categorias as categoriapai
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and categoriapai.id = categorias.categoria_pai_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            } else {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas,
+                                                     categorias as categoriapai
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and categoriapai.id = categorias.categoria_pai_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            }
 
             foreach ($datas as $d => $data):
                 $string = '';
                 $string_fim = '';
                 $string['data'] = $data[0]['anomes'];
 
-                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
-                                                 from categorias,
-                                                      lancamentos,
-                                                      caixas,
-                                                      categorias as categoriapai
-                                                where caixas.id = lancamentos.caixa_id
-                                                  and categoriapai.id = categorias.categoria_pai_id
-                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                                  and caixas.empresa_id = ' . $empresa_id . '
-                                                  and lancamentos.categoria_id = categorias.id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
-                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         categoriapai.descricao
-                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         sum(valor) desc');
-
+                if (!empty($tipo)) {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas,
+                                                         categorias as categoriapai
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and categoriapai.id = categorias.categoria_pai_id
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categoriapai.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                } else {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas,
+                                                         categorias as categoriapai
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and categoriapai.id = categorias.categoria_pai_id
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categoriapai.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                }
                 foreach ($result as $k => $item):
                     $string[$item[0]['descricao']] = $item[0]['valor'];
                     $string[] = $item[0]['valor'];
@@ -391,7 +471,24 @@ class CaixasController extends AppController {
 
             //Relatório Linha
 
-            $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+                                                 from categorias,
+                                                      lancamentos,
+                                                      caixas,
+                                                      categorias as categoriapai
+                                                where caixas.id = lancamentos.caixa_id
+                                                  and categoriapai.id = categorias.categoria_pai_id
+                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                  and caixas.empresa_id = ' . $empresa_id . '
+                                                  and lancamentos.categoria_id = categorias.id
+                                                  and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                         categoriapai.descricao
+                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                         sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
                                                  from categorias,
                                                       lancamentos,
                                                       caixas,
@@ -405,11 +502,12 @@ class CaixasController extends AppController {
                                                          categoriapai.descricao
                                                 order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
                                                          sum(valor) desc');
+            }
 
             $columns_linha['data'] = array('type' => 'string', 'label' => 'Data');
             foreach ($result as $key => $item) :
                 $columns_linha[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
-                $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
+//                $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
             endforeach;
 
             $column_chart_linha = new GoogleCharts();
@@ -426,39 +524,72 @@ class CaixasController extends AppController {
 
             $column_chart_linha->columns($columns_linha);
 
-            $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas,
-                                                 categorias as categoriapai
-                                           where caixas.id = lancamentos.caixa_id
-                                             and categoriapai.id = categorias.categoria_pai_id
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
-
+            if (!empty($tipo)) {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas,
+                                                     categorias as categoriapai
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and categoriapai.id = categorias.categoria_pai_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            } else {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas,
+                                                     categorias as categoriapai
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and categoriapai.id = categorias.categoria_pai_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            }
 
             foreach ($datas as $d => $data):
                 $string = '';
                 $string_fim = '';
                 $string['data'] = $data[0]['anomes'];
 
-                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
-                                                 from categorias,
-                                                      lancamentos,
-                                                      caixas,
-                                                      categorias as categoriapai
-                                                where caixas.id = lancamentos.caixa_id
-                                                  and categoriapai.id = categorias.categoria_pai_id
-                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                                  and caixas.empresa_id = ' . $empresa_id . '
-                                                  and lancamentos.categoria_id = categorias.id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
-                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         categoriapai.descricao
-                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         sum(valor) desc');
+                if (!empty($tipo)) {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas,
+                                                         categorias as categoriapai
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and categoriapai.id = categorias.categoria_pai_id
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categoriapai.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                } else {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas,
+                                                         categorias as categoriapai
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and categoriapai.id = categorias.categoria_pai_id
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categoriapai.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                }
 
                 foreach ($result as $k => $item):
                     $string[$item[0]['descricao']] = $item[0]['valor'];
@@ -486,22 +617,38 @@ class CaixasController extends AppController {
                     'type' => 'number',
                     'label' => 'Valor',
                     'format' => '#,###',
-                    'role' => 'annotation'
+//                    'role' => 'annotation'
                 )
             ));
 
-            $result = $this->Caixa->query('select categoriapai.descricao, sum(valor)::float as valor
-                                             from categorias,
-                                                  lancamentos,
-                                                  caixas,
-                                                  categorias as categoriapai
-                                            where caixas.id = lancamentos.caixa_id
-                                              and categoriapai.id = categorias.categoria_pai_id
-                                              and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                              and caixas.empresa_id = ' . $empresa_id . '
-                                              and lancamentos.categoria_id = categorias.id
-                                            group by categoriapai.descricao
-                                            order by sum(valor) desc');
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select categoriapai.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas,
+                                                     categorias as categoriapai
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and categoriapai.id = categorias.categoria_pai_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               group by categoriapai.descricao
+                                               order by sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select categoriapai.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas,
+                                                     categorias as categoriapai
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and categoriapai.id = categorias.categoria_pai_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               group by categoriapai.descricao
+                                               order by sum(valor) desc');
+            }
 
             foreach ($result as $item) {
                 $piechart->addRow(array('categoria' => $item[0]['descricao'], $item[0]['valor'], 'valor' => $item[0]['valor']));
@@ -520,7 +667,8 @@ class CaixasController extends AppController {
 
             //Relatório Valor Total x Categorias - Barras
 
-            $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
                                                  from categorias,
                                                       lancamentos,
                                                       caixas
@@ -528,15 +676,32 @@ class CaixasController extends AppController {
                                                   and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
                                                   and caixas.empresa_id = ' . $empresa_id . '
                                                   and lancamentos.categoria_id = categorias.id
+                                                  and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                  and caixas.id = lancamentos.caixa_id
                                                 group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         categorias.descricao
+                                                            categorias.descricao
                                                 order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         sum(valor) desc');
+                                                         sum(valor)::float desc');
+            } else {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                 from categorias,
+                                                      lancamentos,
+                                                      caixas
+                                                where lancamentos.categoria_id in (' . $categorias . ')
+                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                  and caixas.empresa_id = ' . $empresa_id . '
+                                                  and lancamentos.categoria_id = categorias.id
+                                                  and caixas.id = lancamentos.caixa_id
+                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                         sum(valor)::float desc');
+            }
 
             $columns['data'] = array('type' => 'string', 'label' => 'Data');
             foreach ($result as $key => $item) :
                 $columns[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
-                $columns[] = array('type' => 'number', 'role' => 'annotation');
+//                $columns[] = array('type' => 'number', 'role' => 'annotation');
             endforeach;
 
             $column_chart = new GoogleCharts();
@@ -553,38 +718,72 @@ class CaixasController extends AppController {
 
             $column_chart->columns($columns);
 
-            $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas
-                                           where caixas.id = lancamentos.caixa_id
-                                             and lancamentos.categoria_id in (' . $categorias . ')
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
-
+            if (!empty($tipo)) {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and caixas.id = lancamentos.caixa_id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            } else {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and caixas.id = lancamentos.caixa_id
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            }
 
             foreach ($datas as $d => $data):
                 $string = '';
                 $string_fim = '';
                 $string['data'] = $data[0]['anomes'];
 
-                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
-                                                 from categorias,
-                                                      lancamentos,
-                                                      caixas
-                                                where caixas.id = lancamentos.caixa_id
-                                                  and lancamentos.categoria_id in (' . $categorias . ')
-                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                                  and caixas.empresa_id = ' . $empresa_id . '
-                                                  and lancamentos.categoria_id = categorias.id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
-                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         categorias.descricao
-                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         sum(valor) desc');
-
+                if (!empty($tipo)) {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categorias . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                     and caixas.id = lancamentos.caixa_id
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                } else {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categorias . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and caixas.id = lancamentos.caixa_id
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor)::float desc');
+                }
                 foreach ($result as $k => $item):
                     $string[$item[0]['descricao']] = $item[0]['valor'];
                     $string[] = $item[0]['valor'];
@@ -596,23 +795,39 @@ class CaixasController extends AppController {
             $this->set(compact('column_chart'));
 
             //Relatório Valor Total x Categorias - Linhas
-            $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas
-                                           where lancamentos.categoria_id in (' . $categorias . ')
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                    categorias.descricao
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                    sum(valor) desc');
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        categorias.descricao
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        categorias.descricao
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        sum(valor) desc');
+            }
 
             $columns_linha['data'] = array('type' => 'string', 'label' => 'Data');
             foreach ($result as $key => $item) :
                 $columns_linha[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
-                $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
+//                $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
             endforeach;
 
             $column_chart_linha = new GoogleCharts();
@@ -629,37 +844,68 @@ class CaixasController extends AppController {
 
             $column_chart_linha->columns($columns_linha);
 
-            $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas
-                                           where caixas.id = lancamentos.caixa_id
-                                             and lancamentos.categoria_id in (' . $categorias . ')
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
-
+            if (!empty($tipo)) {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            } else {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            }
 
             foreach ($datas as $d => $data):
                 $string = '';
                 $string_fim = '';
                 $string['data'] = $data[0]['anomes'];
 
-                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
-                                                 from categorias,
-                                                      lancamentos,
-                                                      caixas
-                                                where caixas.id = lancamentos.caixa_id
-                                                  and lancamentos.categoria_id in (' . $categorias . ')
-                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                                  and caixas.empresa_id = ' . $empresa_id . '
-                                                  and lancamentos.categoria_id = categorias.id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
-                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         categorias.descricao
-                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         sum(valor) desc');
+                if (!empty($tipo)) {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categorias . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                } else {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categorias . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                }
 
                 foreach ($result as $k => $item):
                     $string[$item[0]['descricao']] = $item[0]['valor'];
@@ -687,21 +933,36 @@ class CaixasController extends AppController {
                     'type' => 'number',
                     'label' => 'Valor',
                     'format' => '#,###',
-                    'role' => 'annotation'
+//                    'role' => 'annotation'
                 )
             ));
 
-            $result = $this->Caixa->query('select categorias.descricao, sum(valor)::float as valor
-                                             from categorias,
-                                                  lancamentos,
-                                                  caixas
-                                            where caixas.id = lancamentos.caixa_id
-                                              and lancamentos.categoria_id in (' . $categorias . ')
-                                              and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                              and caixas.empresa_id = ' . $empresa_id . '
-                                              and lancamentos.categoria_id = categorias.id
-                                            group by categorias.descricao
-                                            order by sum(valor) desc');
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               group by categorias.descricao
+                                               order by sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categorias . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               group by categorias.descricao
+                                               order by sum(valor) desc');
+            }
 
             foreach ($result as $item) {
                 $piechart->addRow(array('categoria' => $item[0]['descricao'], $item[0]['valor'], 'valor' => $item[0]['valor']));
@@ -715,7 +976,22 @@ class CaixasController extends AppController {
         } else {
             //Relatório Valor Total x Categorias - Barras
 
-            $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                 from categorias,
+                                                      lancamentos,
+                                                      caixas
+                                                where lancamentos.categoria_id in (' . $categoria_id . ')
+                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                  and caixas.empresa_id = ' . $empresa_id . '
+                                                  and lancamentos.categoria_id = categorias.id
+                                                  and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                         categorias.descricao
+                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                         sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
                                                  from categorias,
                                                       lancamentos,
                                                       caixas
@@ -727,11 +1003,12 @@ class CaixasController extends AppController {
                                                          categorias.descricao
                                                 order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
                                                          sum(valor) desc');
+            }
 
             $columns['data'] = array('type' => 'string', 'label' => 'Data');
             foreach ($result as $key => $item) :
                 $columns[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
-                $columns[] = array('type' => 'number', 'role' => 'annotation');
+//                $columns[] = array('type' => 'number', 'role' => 'annotation');
             endforeach;
 
             $column_chart = new GoogleCharts();
@@ -748,16 +1025,30 @@ class CaixasController extends AppController {
 
             $column_chart->columns($columns);
 
-            $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas
-                                           where caixas.id = lancamentos.caixa_id
-                                             and lancamentos.categoria_id in (' . $categoria_id . ')
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            if (!empty($tipo)) {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            } else {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            }
 
 
             foreach ($datas as $d => $data):
@@ -765,20 +1056,38 @@ class CaixasController extends AppController {
                 $string_fim = '';
                 $string['data'] = $data[0]['anomes'];
 
-                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
-                                                 from categorias,
-                                                      lancamentos,
-                                                      caixas
-                                                where caixas.id = lancamentos.caixa_id
-                                                  and lancamentos.categoria_id in (' . $categoria_id . ')
-                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                                  and caixas.empresa_id = ' . $empresa_id . '
-                                                  and lancamentos.categoria_id = categorias.id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
-                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         categorias.descricao
-                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         sum(valor) desc');
+                if (!empty($tipo)) {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                } else {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                }
 
                 foreach ($result as $k => $item):
                     $string[$item[0]['descricao']] = $item[0]['valor'];
@@ -791,23 +1100,39 @@ class CaixasController extends AppController {
             $this->set(compact('column_chart'));
 
             //Relatório Valor Total x Categorias - Linhas
-            $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas
-                                           where lancamentos.categoria_id in (' . $categoria_id . ')
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                    categorias.descricao
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                    sum(valor) desc');
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        categorias.descricao
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        categorias.descricao
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                        sum(valor) desc');
+            }
 
             $columns_linha['data'] = array('type' => 'string', 'label' => 'Data');
             foreach ($result as $key => $item) :
                 $columns_linha[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
-                $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
+//                $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
             endforeach;
 
             $column_chart_linha = new GoogleCharts();
@@ -824,38 +1149,68 @@ class CaixasController extends AppController {
 
             $column_chart_linha->columns($columns_linha);
 
-            $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
-                                            from categorias,
-                                                 lancamentos,
-                                                 caixas
-                                           where caixas.id = lancamentos.caixa_id
-                                             and lancamentos.categoria_id in (' . $categoria_id . ')
-                                             and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                             and caixas.empresa_id = ' . $empresa_id . '
-                                             and lancamentos.categoria_id = categorias.id
-                                           order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
-
+            if (!empty($tipo)) {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            } else {
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+            }
 
             foreach ($datas as $d => $data):
                 $string = '';
                 $string_fim = '';
                 $string['data'] = $data[0]['anomes'];
 
-                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
-                                                 from categorias,
-                                                      lancamentos,
-                                                      caixas
-                                                where caixas.id = lancamentos.caixa_id
-                                                  and lancamentos.categoria_id in (' . $categoria_id . ')
-                                                  and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                                  and caixas.empresa_id = ' . $empresa_id . '
-                                                  and lancamentos.categoria_id = categorias.id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
-                                                group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         categorias.descricao
-                                                order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
-                                                         sum(valor) desc');
-
+                if (!empty($tipo)) {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                } else {
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+                }
                 foreach ($result as $k => $item):
                     $string[$item[0]['descricao']] = $item[0]['valor'];
                     $string[] = $item[0]['valor'];
@@ -882,21 +1237,36 @@ class CaixasController extends AppController {
                     'type' => 'number',
                     'label' => 'Valor',
                     'format' => '#,###',
-                    'role' => 'annotation'
+//                    'role' => 'annotation'
                 )
             ));
 
-            $result = $this->Caixa->query('select categorias.descricao, sum(valor)::float as valor
-                                             from categorias,
-                                                  lancamentos,
-                                                  caixas
-                                            where caixas.id = lancamentos.caixa_id
-                                              and lancamentos.categoria_id in (' . $categoria_id . ')
-                                              and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                              and caixas.empresa_id = ' . $empresa_id . '
-                                              and lancamentos.categoria_id = categorias.id
-                                            group by categorias.descricao
-                                            order by sum(valor) desc');
+            if (!empty($tipo)) {
+                $result = $this->Caixa->query('select categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               group by categorias.descricao
+                                               order by sum(valor) desc');
+            } else {
+                $result = $this->Caixa->query('select categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and lancamentos.categoria_id in (' . $categoria_id . ')
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                               group by categorias.descricao
+                                               order by sum(valor) desc');
+            }
 
             foreach ($result as $item) {
                 $piechart->addRow(array('categoria' => $item[0]['descricao'], $item[0]['valor'], 'valor' => $item[0]['valor']));
@@ -932,6 +1302,10 @@ class CaixasController extends AppController {
         $this->set('tipografico', $tipografico);
 
         if ($this->request->is('post') || $this->request->is('put')) {
+            if ((empty($this->request->data['Relatorio']['dtdespesa_inicio'])) or (empty($this->request->data['Relatorio']['dtdespesa_fim']))) {
+                $this->Session->setFlash('Período obrigatório.', 'default', array('class' => 'mensagem_erro'));
+                return;
+            }
             CakeSession::write('relatorio', $this->request->data);
             $this->redirect(array('action' => 'relatorio_movimentacaos'));
         }
@@ -952,29 +1326,32 @@ class CaixasController extends AppController {
                                               case when (categorias.tipo = ' . "'E'" . ') then ' . "'Entradas'" . '
                                               else case when (categorias.tipo = ' . "'S'" . ') then ' . "'Saidas'" . '
                                               else case when (categorias.tipo = ' . "'R'" . ') then ' . "'Retiradas'" . ' end end end as tipo,
+                                              case when (categorias.tipo = ' . "'E'" . ') then ' . "'1'" . '
+                                              else case when (categorias.tipo = ' . "'S'" . ') then ' . "'2'" . '
+                                              else case when (categorias.tipo = ' . "'R'" . ') then ' . "'3'" . ' end end end as ordem,
                                               sum(valor)::float as valor
                                          from categorias,
                                               lancamentos,
                                               caixas
                                         where caixas.id = lancamentos.caixa_id
-                                          and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                          and caixas.empresa_id = 7
+                                          and to_char(caixas.dtcaixa, ' . "'yyyy-mm'" . ') BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . "'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . "'" . '
+                                          and caixas.empresa_id = ' . $empresa_id . '
                                           and lancamentos.categoria_id = categorias.id
                                           and categorias.ativo = ' . "'S'" . '
                                         group by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . '), categorias.tipo
-                                        order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc');
+                                        order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc, ordem asc');
 
         $this->set('result', $result);
 
         //Relatório de movimentações - Linhas
 
-        $tipos = array('E' => 'Entradas', 'R' => 'Retiradas', 'S' => 'Saidas', 'L' => 'Lucro', 'D' => 'Saldo');
+        $tipos = array('E' => 'Entradas', 'S' => 'Saidas', 'R' => 'Retiradas', 'L' => 'Lucro', 'D' => 'Saldo');
 
         $columns_linha['data'] = array('type' => 'string', 'label' => 'Data');
 
         foreach ($tipos as $key => $item) :
             $columns_linha[$item] = array('type' => 'number', 'label' => $item);
-            $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
+//            $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
         endforeach;
 
         $column_chart_linha = new GoogleCharts();
@@ -992,16 +1369,16 @@ class CaixasController extends AppController {
         $column_chart_linha->columns($columns_linha);
 
         $datas = $this->Caixa->query('select distinct to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') as mesano
-                                         from categorias,
-                                              lancamentos,
-                                              caixas
-                                        where caixas.id = lancamentos.caixa_id
-                                          and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                          and caixas.empresa_id = 7
-                                          and lancamentos.categoria_id = categorias.id
-                                          and categorias.ativo = ' . "'S'" . '
-                                        group by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ')
-                                        order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc');
+                                        from categorias,
+                                             lancamentos,
+                                             caixas
+                                       where caixas.id = lancamentos.caixa_id
+                                         and to_char(caixas.dtcaixa, ' . "'yyyy-mm'" . ') BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . "'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . "'" . '
+                                         and caixas.empresa_id = ' . $empresa_id . '
+                                         and lancamentos.categoria_id = categorias.id
+                                         and categorias.ativo = ' . "'S'" . '
+                                       group by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ')
+                                       order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc');
 
         foreach ($datas as $d => $data):
             $string = '';
@@ -1012,17 +1389,20 @@ class CaixasController extends AppController {
                                                       case when (categorias.tipo = ' . "'E'" . ') then ' . "'Entradas'" . '
                                                       else case when (categorias.tipo = ' . "'S'" . ') then ' . "'Saidas'" . '
                                                       else case when (categorias.tipo = ' . "'R'" . ') then ' . "'Retiradas'" . ' end end end as tipo,
+                                                      case when (categorias.tipo = ' . "'E'" . ') then ' . "'1'" . '
+                                                      else case when (categorias.tipo = ' . "'S'" . ') then ' . "'2'" . '
+                                                      else case when (categorias.tipo = ' . "'R'" . ') then ' . "'3'" . ' end end end as ordem,
                                                       sum(valor)::float as valor
                                                  from categorias,
                                                       lancamentos,
                                                       caixas
                                                 where caixas.id = lancamentos.caixa_id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['mesano'] . "'" . '
-                                                  and caixas.empresa_id = 7
+                                                  and to_char(caixas.dtcaixa, ' . "'yyyy-mm'" . ') = ' . "'" . substr($data[0]['mesano'], 3, 4) . '-' . substr($data[0]['mesano'], 0, 2) . "'" . '
+                                                  and caixas.empresa_id = ' . $empresa_id . '
                                                   and lancamentos.categoria_id = categorias.id
                                                   and categorias.ativo = ' . "'S'" . '
                                                 group by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . '), categorias.tipo
-                                                order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . '), categorias.tipo asc');
+                                                order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc, ordem asc');
 
             $entradas = 0;
             $saidas = 0;
@@ -1053,13 +1433,13 @@ class CaixasController extends AppController {
 
         //Relatório de movimentações - Barras
 
-        $tipos = array('E' => 'Entradas', 'R' => 'Retiradas', 'S' => 'Saidas', 'L' => 'Lucro', 'D' => 'Saldo');
+        $tipos = array('E' => 'Entradas', 'S' => 'Saidas', 'R' => 'Retiradas', 'L' => 'Lucro', 'D' => 'Saldo');
 
         $columns_barras['data'] = array('type' => 'string', 'label' => 'Data');
 
         foreach ($tipos as $key => $item) :
             $columns_barras[$item] = array('type' => 'number', 'label' => $item);
-            $columns_barras[] = array('type' => 'number', 'role' => 'annotation');
+//            $columns_barras[] = array('type' => 'number', 'role' => 'annotation');
         endforeach;
 
         $column_chart_barras = new GoogleCharts();
@@ -1077,16 +1457,16 @@ class CaixasController extends AppController {
         $column_chart_barras->columns($columns_barras);
 
         $datas = $this->Caixa->query('select distinct to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') as mesano
-                                         from categorias,
-                                              lancamentos,
-                                              caixas
-                                        where caixas.id = lancamentos.caixa_id
-                                          and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
-                                          and caixas.empresa_id = 7
-                                          and lancamentos.categoria_id = categorias.id
-                                          and categorias.ativo = ' . "'S'" . '
-                                        group by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ')
-                                        order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc');
+                                        from categorias,
+                                             lancamentos,
+                                             caixas
+                                       where caixas.id = lancamentos.caixa_id
+                                         and to_char(caixas.dtcaixa, ' . "'yyyy-mm'" . ') BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . "'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . "'" . '
+                                         and caixas.empresa_id = ' . $empresa_id . '
+                                         and lancamentos.categoria_id = categorias.id
+                                         and categorias.ativo = ' . "'S'" . '
+                                       group by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ')
+                                       order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc');
 
         foreach ($datas as $d => $data):
             $string = '';
@@ -1097,17 +1477,20 @@ class CaixasController extends AppController {
                                                       case when (categorias.tipo = ' . "'E'" . ') then ' . "'Entradas'" . '
                                                       else case when (categorias.tipo = ' . "'S'" . ') then ' . "'Saidas'" . '
                                                       else case when (categorias.tipo = ' . "'R'" . ') then ' . "'Retiradas'" . ' end end end as tipo,
+                                                      case when (categorias.tipo = ' . "'E'" . ') then ' . "'1'" . '
+                                                      else case when (categorias.tipo = ' . "'S'" . ') then ' . "'2'" . '
+                                                      else case when (categorias.tipo = ' . "'R'" . ') then ' . "'3'" . ' end end end as ordem,
                                                       sum(valor)::float as valor
                                                  from categorias,
                                                       lancamentos,
                                                       caixas
                                                 where caixas.id = lancamentos.caixa_id
-                                                  and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['mesano'] . "'" . '
-                                                  and caixas.empresa_id = 7
+                                                  and to_char(caixas.dtcaixa, ' . "'yyyy-mm'" . ') = ' . "'" . substr($data[0]['mesano'], 3, 4) . '-' . substr($data[0]['mesano'], 0, 2) . "'" . '
+                                                  and caixas.empresa_id = ' . $empresa_id . '
                                                   and lancamentos.categoria_id = categorias.id
                                                   and categorias.ativo = ' . "'S'" . '
                                                 group by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . '), categorias.tipo
-                                                order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . '), categorias.tipo asc');
+                                                order by to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') asc, ordem asc');
 
             $entradas = 0;
             $saidas = 0;

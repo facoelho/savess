@@ -3,7 +3,9 @@
 <?php $entradas = 0; ?>
 <?php $saidas = 0; ?>
 <?php $lucro = 0; ?>
+<?php $retiradas = 0; ?>
 <?php $saldo = 0; ?>
+<?php $saldo_final = 0; ?>
 <?php $cont = 0; ?>
 <br><br>
 <table cellpadding="0" cellspacing="0">
@@ -22,12 +24,14 @@
                 </tr>
                 <tr>
                     <td><?php echo ''; ?></td>
-                    <td><?php echo 'Saldo'; ?></td>
-                    <td><?php echo number_format((($entradas - $saidas) - $retiradas), 2, ",", ""); ?></td>
+                    <td><b><?php echo 'Saldo'; ?></b></td>
+                    <td><b><?php echo number_format((($entradas - $saidas) - $retiradas), 2, ",", ""); ?></b></td>
                 </tr>
-                <?php $saldo = $saldo + (($entradas - $saidas) - $retiradas); ?>
+                <?php $saldo_final = $saldo_final + ($saldo + (($entradas - $saidas) - $retiradas)); ?>
                 <?php $entradas = 0; ?>
                 <?php $saidas = 0; ?>
+                <?php $saldo = 0; ?>
+                <?php $retiradas = 0; ?>
             <?php } ?>
             <tr>
                 <td><b><?php echo $item[0]['mesano']; ?></b></td>
@@ -46,7 +50,7 @@
                 <td><?php echo $item[0]['tipo']; ?>&nbsp;</td>
                 <?php $retiradas = $item[0]['valor']; ?>
             <?php } ?>
-            <td><?php echo $item[0]['valor']; ?>&nbsp;</td>
+            <td><?php echo number_format($item[0]['valor'], 2, ",", ""); ?>&nbsp;</td>
         </tr>
         <?php $mesano = $item[0]['mesano']; ?>
         <?php $cont++; ?>
@@ -58,19 +62,20 @@
     </tr>
     <tr>
         <td><?php echo ''; ?></td>
-        <td><?php echo 'Saldo'; ?></td>
-        <td><?php echo number_format((($entradas - $saidas) - $retiradas), 2, ",", ""); ?></td>
+        <td><b><?php echo 'Saldo'; ?></b></td>
+        <td><b><?php echo number_format((($entradas - $saidas) - $retiradas), 2, ",", ""); ?></b></td>
     </tr>
-    <?php $saldo = $saldo + (($entradas - $saidas) - $retiradas); ?>
+    <?php $saldo_final = $saldo_final + ($saldo + (($entradas - $saidas) - $retiradas)); ?>
     <?php $entradas = 0; ?>
     <?php $saidas = 0; ?>
+    <?php $saldo = 0; ?>
     <tr>
         <td colspan="3"><?php echo ''; ?></td>
     </tr>
     <tr>
         <td><?php echo ''; ?></td>
         <td><b><?php echo 'Saldo final'; ?></b></td>
-        <td><b><?php echo number_format($saldo, 2, ",", ""); ?></b></td>
+        <td><b><?php echo number_format($saldo_final, 2, ",", ""); ?></b></td>
     </tr>
 </table>
 <br><br>

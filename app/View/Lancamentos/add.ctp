@@ -33,7 +33,7 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
                     $("#categoriaID").html(data);
                 },
                 type: "post",
-                url: "\/savess_cap/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
+                url: "\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
             });
         });
 

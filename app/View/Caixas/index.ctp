@@ -3,6 +3,15 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
 ?>
 <br>
 <br>
+<div id="filtroGrade">
+    <?php
+    echo $this->Search->create();
+    echo $this->Search->input('filter1', array('class' => 'input-box', 'placeholder' => 'Descrição'));
+    echo $this->Html->image("separador.png");
+    ?>
+    <input type="submit" value="Filtrar" class="botaoFiltro"/>
+
+</div>
 <table cellpadding="0" cellspacing="0">
     <tr>
         <th><?php echo $this->Paginator->sort('id'); ?></th>

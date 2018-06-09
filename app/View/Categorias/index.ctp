@@ -21,7 +21,6 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
         <th><?php echo $this->Paginator->sort('descricao', 'Descrição'); ?></th>
         <th><?php echo $this->Paginator->sort('categoria_pai_id', 'Categoria pai'); ?></th>
         <th><?php echo $this->Paginator->sort('ativo', 'Ativo'); ?></th>
-
         <th class="actions"><?php echo __('Ações'); ?></th>
     </tr>
     <?php foreach ($categorias as $item): ?>
@@ -40,7 +39,7 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
                     <?php
                     echo $this->Html->link($this->Html->image("botoes/view.png", array("alt" => "Visualizar", "title" => "Visualizar")), array('action' => 'view', $item['Categoria']['id']), array('escape' => false));
                     echo $this->Html->link($this->Html->image("botoes/editar.gif", array("alt" => "Editar", "title" => "Editar")), array('action' => 'edit', $item['Categoria']['id']), array('escape' => false));
-                    echo $this->Form->postLink($this->Html->image('botoes/excluir.gif', array('alt' => 'Exluir', 'title' => 'Exluir')), array('action' => 'delete', $item['Categoria']['id']), array('escape' => false), __('Você realmete deseja apagar esse item?')
+                    echo $this->Html->link($this->Html->image('botoes/excluir.gif', array('alt' => 'Exluir', 'title' => 'Exluir')), array('action' => 'delete', $item['Categoria']['id']), array('escape' => false), __('Você realmete deseja apagar esse item?')
                     );
                     ?>
                 </div>

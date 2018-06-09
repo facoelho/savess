@@ -25,6 +25,7 @@ class CategoriasController extends AppController {
     public function index() {
 
         $dadosUser = $this->Session->read();
+        $conditions = array();
 
         $ativo = array('S' => 'SIM', 'N' => 'NÃO');
 
@@ -47,6 +48,15 @@ class CategoriasController extends AppController {
                 )
         );
 
+        foreach ($this->Filter->getConditions() as $key => $item) :
+            if ($key == 'Categoria.descricao ILIKE') {
+                $conditions[] = 'Categoria.descricao ILIKE ' . "'%" . $item . "%'" . ' OR ' . 'Categoriapai.descricao ILIKE ' . "'%" . $item . "%'";
+            }
+            if ($key == 'Categoria.ativo =') {
+                $conditions[] = 'Categoria.ativo = ' . "'" . $item . "'";
+            }
+        endforeach;
+
         $this->Categoria->recursive = 0;
         $this->Paginator->settings = array(
             'fields' => array('Categoria.id', 'Categoria.descricao', 'Categoria.ativo', 'Categoriapai.descricao', 'Categoria.tipo'),
@@ -62,7 +72,7 @@ class CategoriasController extends AppController {
             'order' => array('Categoria.descricao' => 'asc', 'Categoriapai.descricao', 'asc')
         );
 
-        $this->Filter->setPaginate('conditions', array($this->Filter->getConditions(), 'Categoria.empresa_id' => $dadosUser['empresa_id']));
+        $this->Filter->setPaginate('conditions', array($conditions, 'Categoria.empresa_id' => $dadosUser['empresa_id']));
 
         $this->set('categorias', $this->Paginator->paginate('Categoria'));
     }
@@ -181,7 +191,15 @@ class CategoriasController extends AppController {
             $this->Session->setFlash('Registro não encontrado.', 'default', array('class' => 'mensagem_erro'));
             $this->redirect(array('action' => 'index'));
         }
-        $this->request->onlyAllow('post', 'delete');
+
+        $result = $this->Categoria->query('select count(*) as cont
+                                             from public.categorias
+                                            where categoria_pai_id = ' . $id);
+        if ($result[0][0]['cont'] > 0) {
+            $this->Session->setFlash('Categoria pai não pode ser deletada.', 'default', array('class' => 'mensagem_erro'));
+            $this->redirect(array('action' => 'index'));
+        }
+
         if ($this->Categoria->delete()) {
             $this->Session->setFlash('Categoria deletada com sucesso.', 'default', array('class' => 'mensagem_sucesso'));
             $this->redirect(array('action' => 'index'));

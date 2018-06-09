@@ -15,15 +15,15 @@
 
     jQuery(document).ready(function() {
 
-        $("#dtinicioID").mask("99/99/9999");
-        $("#dtfimID").mask("99/99/9999");
+        $("#dtinicioID").mask("99/9999");
+        $("#dtfimID").mask("99/9999");
 
         $("#categorias_paiID").change(function() {
             $("#tipoexameID").text('');
         });
 
         $(".data").datepicker({
-            dateFormat: 'dd/mm/yy',
+            dateFormat: 'mm/yy',
             dayNames: ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'],
             dayNamesMin: ['D', 'S', 'T', 'Q', 'Q', 'S', 'S', 'D'],
             dayNamesShort: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],

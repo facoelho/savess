@@ -81,10 +81,29 @@ class UsersController extends AppController {
     }
 
     public function login() {
+
+//        $this->loadModel('Empresa');
+//        $empresas = $this->Empresa->find('list', array(
+//            'fields' => array('id', 'razaosocial'),
+//            'order' => array('razaosocial'),
+//        ));
+//        $this->set('empresas', $empresas);
+
         if ($this->request->is('post')) {
+
             if ($this->Auth->login()) {
 
                 $usuario = $this->User->read(null, $this->Auth->user('id'));
+//
+//                $result = $this->User->query('select count(*) as cont
+//                                                from usergroupempresas
+//                                               where user_id = ' . $usuario['User']['id'] . '
+//                                                 and empresa_id = ' . $this->request->data['User']['empresa_id']);
+//
+//                if ($result[0][0]['cont'] == 0) {
+//                    $this->Session->setFlash('Usuário não tem permissão para acessar a empresa selecionada.', 'default', array('class' => 'mensagem_erro'));
+//                    $this->redirect($this->Auth->logout());
+//                }
 //                if (strtotime($usuario['Holding']['validade']) < strtotime(date('Y-m-d H:i:s'))) {
 //                    $this->Auth->logout();
 //                    $this->redirect("http://www.savess.com/?erro=validade");
@@ -265,22 +284,22 @@ class UsersController extends AppController {
 
     public function validaPlano($holding_id, $plano_id) {
 
-        $totalUsuarios = $this->User->find('count', array(
-            'conditions' => array('User.holding_id' => $holding_id)
-        ));
-
-        $this->User->Holding->Plano->recursive = 0;
-        $plano = $this->User->Holding->Plano->find('first', array('conditions' => array('id' => $plano_id)));
-
-        if (empty($plano['Plano']['usuario'])) {
-            return true;
-        } else {
-            if ($totalUsuarios >= $plano['Plano']['usuario']) {
-                return false;
-            } else {
-                return true;
-            }
-        }
+//        $totalUsuarios = $this->User->find('count', array(
+//            'conditions' => array('User.holding_id' => $holding_id)
+//        ));
+//
+//        $this->User->Holding->Plano->recursive = 0;
+//        $plano = $this->User->Holding->Plano->find('first', array('conditions' => array('id' => $plano_id)));
+//
+//        if (empty($plano['Plano']['usuario'])) {
+//            return true;
+//        } else {
+//            if ($totalUsuarios >= $plano['Plano']['usuario']) {
+//                return false;
+//            } else {
+//                return true;
+//            }
+//        }
     }
 
 }

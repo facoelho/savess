@@ -259,5 +259,15 @@ class LancamentosController extends AppController {
         $this->redirect(array('action' => 'index'));
     }
 
+    /**
+     * delete_lancamento method
+     */
+    public function delete_lancamento($caixa_id = null, $lancamento_id = null) {
+
+        $this->Lancamento->query('delete from lancamentos where id = ' . $lancamento_id . ' and caixa_id = ' . $caixa_id);
+
+        $this->redirect(array('controller' => 'Caixas', 'action' => 'confere_caixa/' . $caixa_id));
+    }
+
 }
 

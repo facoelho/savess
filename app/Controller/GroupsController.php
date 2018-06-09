@@ -8,17 +8,17 @@ App::import('Controller', 'Users');
  * Groups Controller
  */
 class GroupsController extends AppController {
-    
+
     public function beforeFilter() {
         $this->set('title_for_layout', 'Grupos');
     }
-    
+
     public function isAuthorized($user) {
         $Users = new UsersController;
         return $Users->validaAcesso($this->Session->read(), $this->request->controller);
         return parent::isAuthorized($user);
     }
-    
+
     /**
      * index method
      *
@@ -63,16 +63,16 @@ class GroupsController extends AppController {
         $dadosUser = $this->Session->read();
         $holding_id = $dadosUser['Auth']['User']['Holding']['id'];
         $this->set(compact('holding_id'));
-        
+
         $this->loadModel('Holdingmenu');
         $this->Holdingmenu->recursive = 1;
-        $holdingmenu = $this->Holdingmenu->find('all', array('fields'=>array('Menu.id','Menu.nome'),'conditions'=>array('holding_id'=>$holding_id), 'order' => array('Menu.menu' => 'asc', 'Menu.ordem' => 'asc')));
+        $holdingmenu = $this->Holdingmenu->find('all', array('fields' => array('Menu.id', 'Menu.nome'), 'conditions' => array('holding_id' => $holding_id), 'order' => array('Menu.menu' => 'asc', 'Menu.ordem' => 'asc')));
         $menus = array();
-        foreach($holdingmenu as $key => $subcat){
+        foreach ($holdingmenu as $key => $subcat) {
             $menus = $menus + array($subcat['Menu']['id'] => $subcat['Menu']['nome']);
-        }        
+        }
         $this->set(compact('menus'));
-        
+
         if ($this->request->is('post')) {
             $this->Group->create();
 //            debug($this->request->data);
@@ -97,24 +97,24 @@ class GroupsController extends AppController {
         if (!$this->Group->exists($id)) {
             throw new NotFoundException(__('Grupo inválido.'));
         }
-        
+
         $dadosUser = $this->Session->read();
         $holding_id = $dadosUser['Auth']['User']['Holding']['id'];
-        
+
         $group = $this->Group->read(null, $id);
         if ($group['Holding']['id'] != $dadosUser['Auth']['User']['holding_id']) {
             throw new NotFoundException(__('Grupo inválido.'));
         }
-        
+
         $this->loadModel('Holdingmenu');
         $this->Holdingmenu->recursive = 1;
-        $holdingmenu = $this->Holdingmenu->find('all', array('fields'=>array('Menu.id','Menu.nome'),'conditions'=>array('holding_id'=>$holding_id), 'order' => array('Menu.menu' => 'asc', 'Menu.ordem' => 'asc')));
+        $holdingmenu = $this->Holdingmenu->find('all', array('fields' => array('Menu.id', 'Menu.nome'), 'conditions' => array('holding_id' => $holding_id), 'order' => array('Menu.menu' => 'asc', 'Menu.ordem' => 'asc')));
         $menus = array();
-        foreach($holdingmenu as $key => $subcat){
+        foreach ($holdingmenu as $key => $subcat) {
             $menus = $menus + array($subcat['Menu']['id'] => $subcat['Menu']['nome']);
-        }        
+        }
         $this->set(compact('menus'));
-        
+
         if ($this->request->is('post') || $this->request->is('put')) {
             if ($this->Group->save($this->request->data)) {
                 $this->Session->setFlash('Grupo alterado com sucesso.', 'default', array('class' => 'mensagem_sucesso'));

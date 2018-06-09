@@ -84,7 +84,7 @@
                         </span>
                         <br></br>
                         <?php if (count($dadosUser['empresasCombo']) > 1) { ?>
-                            <select name="trocaEmpresa" id="trocaEmpresa" class="trocaEmpresa" title="Trocar a empresa" onChange="location.href = 'http://www.savess.com.br/sistema/users/trocaEmpresa/' + this.value;">
+                            <select name="trocaEmpresa" id="trocaEmpresa" class="trocaEmpresa" title="Trocar a empresa" onChange="location.href = 'http://www.savess.com.br/users/trocaEmpresa/' + this.value;">
                                 <option value="">Alterar empresa</option>
                                 <?php for ($i = 0; $i < count($dadosUser['empresasCombo']); $i++) { ?>
                                     <option value="<?php echo $dadosUser['empresasCombo'][$i]['Empresa']['id']; ?>"><?php echo $dadosUser['empresasCombo'][$i]['Empresa']['nomefantasia']; ?></option>

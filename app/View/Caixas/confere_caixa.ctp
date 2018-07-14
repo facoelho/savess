@@ -27,8 +27,10 @@ $retiradas = 0;
             <td>
                 <div id="botoes">
                     <?php
-                    echo $this->Html->link($this->Html->image('botoes/excluir.gif', array('alt' => 'Exluir', 'title' => 'Exluir')), array('controller' => 'Lancamentos', 'action' => 'delete_lancamento', $id, $item['Lancamento']['id']), array('escape' => false), __('Você realmete deseja apagar esse item?')
-                    );
+                    if ($adminholding == 1) {
+                        echo $this->Html->link($this->Html->image('botoes/excluir.gif', array('alt' => 'Exluir', 'title' => 'Exluir')), array('controller' => 'Lancamentos', 'action' => 'delete_lancamento', $id, $item['Lancamento']['id']), array('escape' => false), __('Você realmete deseja apagar esse item?')
+                        );
+                    }
                     ?>
                 </div>
             </td>

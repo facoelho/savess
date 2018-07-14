@@ -6,6 +6,8 @@ App::import('Controller', 'Users');
 
 App::uses('GoogleCharts', 'GoogleCharts.Lib');
 
+App::uses('ExportComponent', 'Export.Controller/Component');
+
 /**
  * Caixas Controller
  */
@@ -25,7 +27,21 @@ class CaixasController extends AppController {
      * index method
      */
     public function index() {
+
         $dadosUser = $this->Session->read();
+        $this->set('adminholding', $dadosUser['Auth']['User']['adminholding']);
+
+        $empresa_id = $dadosUser['empresa_id'];
+
+        CakeSession::write('conditions_filtro_caixa', '');
+
+        $this->loadModel('Categoria');
+        $categorias_pai = $this->Categoria->find('list', array('fields' => array('id', 'descricao'),
+            'conditions' => array('empresa_id' => $empresa_id, 'categoria_pai_id IS NULL', 'ativo' => 'S'),
+            'order' => array('descricao')));
+        $this->set('categorias_pai', $categorias_pai);
+
+        $tipo = array('S' => 'Saida', 'E' => 'Entrada', 'R' => 'Retirada');
 
         $this->Caixa->recursive = -1;
 
@@ -40,24 +56,142 @@ class CaixasController extends AppController {
                             )
                         )
                     ),
+                    'filter2' => array(
+                        'Categoria.categoria_pai_id' => array(
+                            'select' => $categorias_pai
+                        ),
+                    ),
+                    'categoria_id' => array(
+                        'Categoria.id' => array(
+                            'select' => ''
+                        ),
+                    ),
+                    'filter5' => array(
+                        'Categoria.tipo' => array(
+                            'select' => $tipo
+                        ),
+                    ),
+                    'filter4' => array(
+                        'Caixa.dtcaixa' => array(
+                            'operator' => 'BETWEEN',
+                            'between' => array(
+                                'text' => __(' e ', true),
+                                'date' => true
+                            )
+                        )
+                    ),
                 )
         );
         $this->Paginator->settings = array(
+            'fields' => array('DISTINCT Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Caixa.status'),
             'joins' => array(
                 array(
                     'table' => 'lancamentos',
                     'alias' => 'Lancamento',
                     'type' => 'LEFT',
                     'conditions' => array('Lancamento.caixa_id = Caixa.id')
+                ),
+                array(
+                    'table' => 'categorias',
+                    'alias' => 'Categoria',
+                    'type' => 'LEFT',
+                    'conditions' => array('Lancamento.categoria_id = Categoria.id')
                 )
             ),
             'conditions' => array('empresa_id' => $dadosUser['empresa_id']),
+            'group' => array('Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Caixa.status'),
             'order' => array('dtcaixa' => 'desc')
         );
 
-        $this->Filter->setPaginate('conditions', array($this->Filter->getConditions()));
+        $this->Filter->setPaginate('conditions', array($this->Filter->getConditions(), 'Caixa.empresa_id' => $dadosUser['empresa_id']));
 
         $this->set('caixas', $this->Paginator->paginate('Caixa'));
+
+        CakeSession::write('conditions_filtro_caixa', array($this->Filter->getConditions(), 'Caixa.empresa_id' => $dadosUser['empresa_id']));
+    }
+
+    /**
+     * imprimir_lista_caixas method
+     */
+    public function imprimir_lista_caixas() {
+
+        $dadosUser = $this->Session->read();
+        $empresa_id = $dadosUser['empresa_id'];
+
+        $conditions_filtro_caixa = $this->Session->read('conditions_filtro_caixa');
+
+        $this->Paginator->settings = array(
+            'fields' => array('Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Lancamento.id', 'Lancamento.descricao', 'Lancamento.valor', 'Lancamento.saldo', 'Lancamento.created', 'User.id', 'User.nome', 'User.sobrenome', 'Categoria.descricao', 'Categoria.tipo'),
+            'joins' => array(
+                array(
+                    'table' => 'lancamentos',
+                    'alias' => 'Lancamento',
+                    'type' => 'LEFT',
+                    'conditions' => array('Lancamento.caixa_id = Caixa.id')
+                ),
+                array(
+                    'table' => 'categorias',
+                    'alias' => 'Categoria',
+                    'type' => 'LEFT',
+                    'conditions' => array('Lancamento.categoria_id = Categoria.id')
+                ),
+                array(
+                    'table' => 'users',
+                    'alias' => 'User',
+                    'type' => 'INNER',
+                    'conditions' => array('User.id = Lancamento.user_id')
+                ),
+            ),
+            'conditions' => array('empresa_id' => $dadosUser['empresa_id']),
+            'order' => array('dtcaixa' => 'desc'),
+            'limit' => ''
+        );
+
+        $this->Filter->setPaginate('conditions', array($conditions_filtro_caixa));
+
+        $this->set('caixas', $this->Paginator->paginate('Caixa'));
+    }
+
+    /**
+     * exportar_csv method
+     */
+    public function exportar_csv() {
+
+        $dadosUser = $this->Session->read();
+        $empresa_id = $dadosUser['empresa_id'];
+
+        $conditions_filtro_caixa = $this->Session->read('conditions_filtro_caixa');
+
+        $this->Paginator->settings = array(
+            'fields' => array('Caixa.dtcaixa', 'Caixa.saldo', 'Lancamento.id', 'Lancamento.descricao', 'Lancamento.valor', 'Lancamento.created', 'User.id', 'User.nome', 'User.sobrenome', 'Categoria.descricao', 'Categoria.tipo'),
+            'joins' => array(
+                array(
+                    'table' => 'lancamentos',
+                    'alias' => 'Lancamento',
+                    'type' => 'LEFT',
+                    'conditions' => array('Lancamento.caixa_id = Caixa.id')
+                ),
+                array(
+                    'table' => 'categorias',
+                    'alias' => 'Categoria',
+                    'type' => 'LEFT',
+                    'conditions' => array('Lancamento.categoria_id = Categoria.id')
+                ),
+                array(
+                    'table' => 'users',
+                    'alias' => 'User',
+                    'type' => 'INNER',
+                    'conditions' => array('User.id = Lancamento.user_id')
+                ),
+            ),
+            'conditions' => array('empresa_id' => $dadosUser['empresa_id']),
+            'order' => array('dtcaixa' => 'asc'),
+            'limit' => ''
+        );
+
+        $this->Filter->setPaginate('conditions', array($conditions_filtro_caixa));
+
+        $this->Export->exportCsv($this->Paginator->paginate('Caixa'), 'caixas.csv');
     }
 
     /**
@@ -217,6 +351,14 @@ class CaixasController extends AppController {
             $this->Session->setFlash('Registro não encontrado.', 'default', array('class' => 'mensagem_erro'));
             $this->redirect(array('action' => 'index'));
         }
+
+        $cont = $this->Caixa->query('select count(*) as cont from public.lancamentos where caixa_id = ' . $id);
+
+        if ($cont[0][0]['cont'] > 0) {
+            $this->Session->setFlash('Caixa não pode ser excluido pois possui registros associados.', 'default', array('class' => 'mensagem_erro'));
+            $this->redirect(array('action' => 'index'));
+        }
+
         if ($this->Caixa->delete()) {
             $this->Session->setFlash('Caixa deletado com sucesso.', 'default', array('class' => 'mensagem_sucesso'));
             $this->redirect(array('action' => 'index'));
@@ -231,6 +373,8 @@ class CaixasController extends AppController {
     public function confere_caixa($id) {
 
         $dadosUser = $this->Session->read();
+        $this->set('adminholding', $dadosUser['Auth']['User']['adminholding']);
+
         $this->Caixa->recursive = 0;
         $this->Paginator->settings = array(
             'fields' => array('Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Lancamento.id', 'Lancamento.descricao', 'Lancamento.valor', 'Lancamento.saldo', 'Lancamento.created', 'User.id', 'User.nome', 'User.sobrenome', 'Categoria.descricao', 'Categoria.tipo', 'Tipoexame.descricao'),
@@ -285,6 +429,9 @@ class CaixasController extends AppController {
             'order' => array('descricao')));
         $this->set('categorias_pai', $categorias_pai);
 
+        $filhas = array('S' => 'SIM');
+        $this->set('filhas', $filhas);
+
         $tipo = array('E' => 'Entradas', 'S' => 'Saídas', 'R' => 'Retiradas');
         $this->set('tipo', $tipo);
 
@@ -292,6 +439,13 @@ class CaixasController extends AppController {
             if ((empty($this->request->data['Relatorio']['dtdespesa_inicio'])) or (empty($this->request->data['Relatorio']['dtdespesa_fim']))) {
                 $this->Session->setFlash('Período obrigatório.', 'default', array('class' => 'mensagem_erro'));
                 return;
+            }
+
+            if (!empty($this->request->data['Relatorio']['pais'])) {
+                if (empty($this->request->data['Relatorio']['tipo'])) {
+                    $this->Session->setFlash('Tipo de lançamento é obrigatório para listar somente as categorias filhas.', 'default', array('class' => 'mensagem_erro'));
+                    return;
+                }
             }
             CakeSession::write('relatorio', $this->request->data);
 //            if ($this->request->data['Relatorio']['tipografico'] == 'B') {
@@ -337,8 +491,145 @@ class CaixasController extends AppController {
             endforeach;
         }
 
-        if (empty($categorias_pai)) {
+        if (!empty($indices['Relatorio']['filhas'])) {
+            if (empty($categorias_pai) and (!empty($indices['Relatorio']['filhas']))) {
+                $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                     from categorias,
+                                                          lancamentos,
+                                                          caixas
+                                                    where caixas.id = lancamentos.caixa_id
+                                                      and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                      and caixas.empresa_id = ' . $empresa_id . '
+                                                      and lancamentos.categoria_id = categorias.id
+                                                      and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                    group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                             categorias.descricao
+                                                    order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                             sum(valor) desc');
 
+                $columns['data'] = array('type' => 'string', 'label' => 'Data');
+                foreach ($result as $key => $item) :
+                    $columns[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
+//                $columns[] = array('type' => 'number', 'role' => 'annotation');
+                endforeach;
+
+                $column_chart = new GoogleCharts();
+
+                $column_chart->type('ColumnChart');
+
+                $column_chart->options(array('width' => '80%',
+                    'heigth' => '70%',
+                    'title' => 'Relatório Valor Total x Categorias',
+//            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
+                    'titleTextStyle' => array('color' => 'grenn'),
+                    'fontSize' => 12,
+                ));
+
+                $column_chart->columns($columns);
+
+                $columns_linha['data'] = array('type' => 'string', 'label' => 'Data');
+                foreach ($result as $key => $item) :
+                    $columns_linha[$item[0]['descricao']] = array('type' => 'number', 'label' => $item[0]['descricao']);
+//                $columns_linha[] = array('type' => 'number', 'role' => 'annotation');
+                endforeach;
+
+                $column_chart_linha = new GoogleCharts();
+
+                $column_chart_linha->type('LineChart');
+
+                $column_chart_linha->options(array('width' => '80%',
+                    'heigth' => '70%',
+                    'title' => 'Relatório Valor Total x Categorias pai',
+//            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
+                    'titleTextStyle' => array('color' => 'grenn'),
+                    'fontSize' => 12,
+                ));
+
+                $column_chart_linha->columns($columns_linha);
+
+                //
+                //GRAFICO DE PIZZA
+                //
+            $piechart = new GoogleCharts();
+                $piechart->type("PieChart");
+                $piechart->options(array('width' => '80%', 'heigth' => '40%', 'title' => "Relatório Valor Total x Categorias pai", 'titleTextStyle' => array('color' => 'blu'),
+                    'fontSize' => 12));
+                $piechart->columns(array(
+                    'categoria' => array(
+                        'type' => 'string',
+                        'label' => 'Categoria'
+                    ),
+                    'valor' => array(
+                        'type' => 'number',
+                        'label' => 'Valor',
+                        'format' => '#,###',
+//                    'role' => 'annotation'
+                    )
+                ));
+
+                $datas = $this->Caixa->query('select distinct SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4)');
+
+                foreach ($datas as $d => $data):
+                    $string = '';
+                    $string_fim = '';
+                    $string['data'] = $data[0]['anomes'];
+
+                    $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categorias.descricao, sum(valor)::float as valor
+                                                    from categorias,
+                                                         lancamentos,
+                                                         caixas
+                                                   where caixas.id = lancamentos.caixa_id
+                                                     and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                     and caixas.empresa_id = ' . $empresa_id . '
+                                                     and lancamentos.categoria_id = categorias.id
+                                                     and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                                     and to_char(caixas.dtcaixa, ' . "'mm-yyyy'" . ') = ' . "'" . $data[0]['anomes'] . "'" . '
+                                                   group by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            categorias.descricao
+                                                   order by SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4),
+                                                            sum(valor) desc');
+
+                    foreach ($result as $k => $item):
+                        $string[$item[0]['descricao']] = $item[0]['valor'];
+                        $string[] = $item[0]['valor'];
+                    endforeach;
+                    $string_fim[] = $string;
+                    $column_chart->addRow($string_fim[0]);
+                    $column_chart_linha->addRow($string_fim[0]);
+                endforeach;
+
+                $this->set(compact('column_chart'));
+                $this->set(compact('column_chart_linha'));
+
+                $result = $this->Caixa->query('select categorias.descricao, sum(valor)::float as valor
+                                                from categorias,
+                                                     lancamentos,
+                                                     caixas
+                                               where caixas.id = lancamentos.caixa_id
+                                                 and caixas.dtcaixa BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . " 00:00:00'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 6, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 3, 2) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . " 23:59:59'" . '
+                                                 and caixas.empresa_id = ' . $empresa_id . '
+                                                 and lancamentos.categoria_id = categorias.id
+                                                 and categorias.tipo = ' . "'" . $tipo . "'" . '
+                                               group by categorias.descricao
+                                               order by sum(valor) desc');
+
+                foreach ($result as $item) {
+                    $piechart->addRow(array('categoria' => $item[0]['descricao'], $item[0]['valor'], 'valor' => $item[0]['valor']));
+                }
+                $this->set(compact('piechart'));
+            }
+        }
+
+        if (empty($categorias_pai) and (empty($indices['Relatorio']['filhas']))) {
             //Relatório Valor Total X categoria
             if (!empty($tipo)) {
                 $result = $this->Caixa->query('select SUBSTRING(dtcaixa::varchar, 6,2) ||' . "'-'" . '|| SUBSTRING(dtcaixa::varchar, 1,4) as anomes, categoriapai.descricao, sum(valor)::float as valor
@@ -655,7 +946,7 @@ class CaixasController extends AppController {
             }
 
             $this->set(compact('piechart'));
-        } elseif (empty($categoria_id)) {
+        } elseif ((empty($categoria_id)) and (empty($indices['Relatorio']['filhas']))) {
             $todas_categorias = $this->Caixa->query('select id, descricao from categorias where categoria_pai_id = ' . $categorias_pai . ' order by descricao');
             foreach ($todas_categorias as $key => $item) :
                 if (empty($categorias)) {
@@ -973,7 +1264,7 @@ class CaixasController extends AppController {
             //
             //Relatório Valor Total x Categorias
             //*
-        } else {
+        } elseif (empty($indices['Relatorio']['filhas'])) {
             //Relatório Valor Total x Categorias - Barras
 
             if (!empty($tipo)) {
@@ -1345,7 +1636,7 @@ class CaixasController extends AppController {
 
         //Relatório de movimentações - Linhas
 
-        $tipos = array('E' => 'Entradas', 'S' => 'Saidas', 'R' => 'Retiradas', 'L' => 'Lucro', 'D' => 'Saldo');
+        $tipos = array('E' => 'Entradas', 'S' => 'Saidas', 'L' => 'Lucro', 'R' => 'Retiradas', 'D' => 'Saldo');
 
         $columns_linha['data'] = array('type' => 'string', 'label' => 'Data');
 

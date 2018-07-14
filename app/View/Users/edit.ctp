@@ -9,7 +9,7 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
     echo $this->Form->input('id');
     echo $this->Form->input('nome');
     echo $this->Form->input('sobrenome');
-    echo $this->Form->input('email');
+    echo $this->Form->input('username', array('label' => 'E-mail'));
     if ($adminmaster == 1) {
         echo $this->Form->input('holding_id', array('type' => 'select', 'options' => $holdings, 'label' => 'Holding', 'empty' => ''));
         //echo $this->Form->input('adminmaster', array ('type' => 'select','options' => $opcoes, 'label' => 'Administrador master?', 'empty' => ''));

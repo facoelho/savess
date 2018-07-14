@@ -87,9 +87,9 @@ class EmpresasController extends AppController {
             $this->request->data['Empresa']['inscestadual'] = str_replace($separadores, '', $this->request->data['Empresa']['inscEstadualEmpresa']);
             $this->request->data['Empresa']['inscmunicipal'] = str_replace($separadores, '', $this->request->data['Empresa']['inscMunicipalEmpresa']);
 
-            if (!empty($this->request->data['Endereco'])) {
-                $this->request->data['Endereco'][0]['cep'] = str_replace($separadores, '', $this->request->data['Endereco'][0]['cep']);
-            }
+//            if (!empty($this->request->data['Endereco'])) {
+//                $this->request->data['Endereco'][0]['cep'] = str_replace($separadores, '', $this->request->data['Endereco'][0]['cep']);
+//            }
 
             if ($this->Empresa->save($this->request->data)) {
 
@@ -155,6 +155,7 @@ class EmpresasController extends AppController {
 //        $this->set('estados', $estados);
 
         if ($this->request->is('post') || $this->request->is('put')) {
+
             if ($this->request->data['Empresa']['logoempresa']['error'] == 0) {
                 // Apaga a imagem antiga
                 if (!empty($this->request->data['Empresa']['img_foto'])) {
@@ -189,7 +190,7 @@ class EmpresasController extends AppController {
 //                $this->request->data['Endereco'][0]['cep'] = str_replace($separadores, '', $this->request->data['Endereco'][0]['cep']);
 //            }
 //
-//            if ($this->Empresa->save($this->request->data)) {
+            if ($this->Empresa->save($this->request->data)) {
 //                if (!empty($this->request->data['Endereco'][0])) {
 //                    if ($this->request->data['Endereco'][0]['cidade_id'] == '') {
 //                        $this->Session->setFlash('A cidade não foi informada.', 'default', array('class' => 'mensagem_erro'));
@@ -226,11 +227,11 @@ class EmpresasController extends AppController {
 //                    }
 //                }
 
-            $this->Session->setFlash('Empresa alterada com sucesso.', 'default', array('class' => 'mensagem_sucesso'));
-            $this->redirect(array('action' => 'index'));
-//        } else {
-//            $this->Session->setFlash('Registro não foi alterado. Por favor tente novamente.', 'default', array('class' => 'mensagem_erro'));
-//        }
+                $this->Session->setFlash('Empresa alterada com sucesso.', 'default', array('class' => 'mensagem_sucesso'));
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash('Registro não foi alterado. Por favor tente novamente.', 'default', array('class' => 'mensagem_erro'));
+            }
         } else {
             $this->request->data = $empresa;
         }

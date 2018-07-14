@@ -25,6 +25,8 @@ class UsersController extends AppController {
 
     public function index() {
         $dadosUser = $this->Session->read();
+        $this->set('adminholding', $dadosUser['Auth']['User']['adminholding']);
+
         $this->User->recursive = 0;
         if ($dadosUser['Auth']['User']['adminmaster'] == 1) {
             $this->Paginator->settings = array(
@@ -33,14 +35,12 @@ class UsersController extends AppController {
             );
         } else {
             $this->Paginator->settings = array(
-                'conditions' => array('holding_id' => $dadosUser['Auth']['User']['holding_id']),
+                'conditions' => array('User.id' => $dadosUser['Auth']['User']['id']),
                 'order' => array('ultimoacesso' => 'desc',
                     'ultimoacesso' => 'desc',)
             );
         }
         $this->set('users', $this->Paginator->paginate('User'));
-
-//        $this->set('validaPlano', $this->validaPlano($dadosUser['Auth']['User']['holding_id'], $dadosUser['Auth']['User']['Holding']['plano_id']));
     }
 
     public function validaAcesso($user, $controller) {

@@ -36,6 +36,8 @@ class AppController extends Controller {
 
     public $components = array(
         'DebugKit.Toolbar' => array('panels' => array('history' => false)),
+        'Export.Export',
+        'Xml',
         'RequestHandler',
         'Session',
         'Paginator',

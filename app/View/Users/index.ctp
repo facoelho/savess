@@ -1,9 +1,8 @@
 <?php
-//if ($validaPlano) {
-echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adicionar", "title" => "Adicionar")), array('action' => 'add'), array('escape' => false));
-echo "<br><br>";
-//}
-//echo $this->Html->link($this->Html->image("botoes/imprimir.png", array("alt" => "Imprimir", "title" => "Imprimir")), array('action' => 'print'), array('escape' => false));
+if ($adminholding == 1) {
+    echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adicionar", "title" => "Adicionar")), array('action' => 'add'), array('escape' => false));
+    echo "<br><br>";
+}
 ?>
 <table cellpadding="0" cellspacing="0">
     <tr>

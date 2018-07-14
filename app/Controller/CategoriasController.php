@@ -50,7 +50,8 @@ class CategoriasController extends AppController {
 
         foreach ($this->Filter->getConditions() as $key => $item) :
             if ($key == 'Categoria.descricao ILIKE') {
-                $conditions[] = 'Categoria.descricao ILIKE ' . "'%" . $item . "%'" . ' OR ' . 'Categoriapai.descricao ILIKE ' . "'%" . $item . "%'";
+                $conditions[] = 'Categoria.descricao ILIKE ' . "'%" . $item . "%'";
+//                $conditions[] = 'Categoria.descricao ILIKE ' . "'%" . $item . "%'" . ' OR ' . 'Categoriapai.descricao ILIKE ' . "'%" . $item . "%'";
             }
             if ($key == 'Categoria.ativo =') {
                 $conditions[] = 'Categoria.ativo = ' . "'" . $item . "'";
@@ -155,7 +156,7 @@ class CategoriasController extends AppController {
         $categorias_pai = $this->Categoria->find('list', array('fields' => array('id', 'descricao'),
             'conditions' => array('empresa_id' => $empresa_id, 'categoria_pai_id IS NULL')));
         $this->set(compact('categorias_pai'));
-
+        debug($categorias_pai);
 //        $tipoexames = $this->Categoria->Tipoexame->find('list', array('fields' => array('id', 'descricao'),
 //            'conditions' => array('empresa_id' => $empresa_id),
 //            'order' => array('descricao')));
@@ -206,6 +207,30 @@ class CategoriasController extends AppController {
         }
         $this->Session->setFlash('Registro não foi deletado.', 'default', array('class' => 'mensagem_erro'));
         $this->redirect(array('action' => 'index'));
+    }
+
+    public function importacao() {
+
+        $caixa_id = '';
+        $categoria_id = '';
+        $descricao = '';
+
+        $categorias = $this->Categoria->query('select id,
+                                                      descricao
+                                                 from public.categorias
+                                                where categoria_pai_id is not null
+                                                  and empresa_id = 15
+                                                order by descricao');
+        foreach ($categorias as $key => $item) :
+            $pai = $this->Categoria->query('select id
+                                              from public.categorias
+                                             where descricao = ' . "'" . $item[0]['descricao'] . "'" . '
+                                               and empresa_id = 15');
+
+            $this->Categoria->query('update public.categorias
+                                        set categoria_pai_id = ' . $pai[0][0]['id'] . '
+                                      where id = ' . $item[0]['id']);
+        endforeach;
     }
 
     /**

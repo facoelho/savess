@@ -51,7 +51,7 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
 <p>
     <?php
     if ($this->Paginator->counter('{:pages}') > 1) {
-        echo "<p> &nbsp; | " . $this->Paginator->numbers() . "| </p>";
+        echo "<p> &nbsp; | " . $this->Paginator->numbers(array('first' => 4, 'last' => 4)) . "| </p>";
     } else {
         echo $this->Paginator->counter('{:count}') . " registros encontrados.";
     }

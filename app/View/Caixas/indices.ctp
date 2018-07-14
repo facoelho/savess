@@ -5,6 +5,7 @@
     echo $this->Form->input('dtdespesa_fim', array('id' => 'dtfimID', 'class' => 'data', 'type' => 'text', 'label' => 'Data final da despesa'));
     echo $this->Form->input('categorias_pai', array('id' => 'categorias_paiID', 'type' => 'select', 'options' => $categorias_pai, 'label' => 'Categoria pai', 'empty' => '-- Selecione a categoria pai --'));
     echo $this->Form->input('categoria_id', array('id' => 'categoriaID', 'type' => 'select', 'label' => 'Categorias'));
+    echo $this->Form->input('filhas', array('id' => 'filhasID', 'type' => 'select', 'options' => $filhas, 'label' => 'Categorias filhas', 'empty' => '-- Selecione somente as categorias filhas --'));
     echo $this->Form->input('tipo', array('id' => 'tipoID', 'type' => 'select', 'options' => $tipo, 'label' => 'Tipo de lançamento', 'empty' => '-- Selecione o tipo de lançamento --'));
 //    echo $this->Form->input('Tipoexame.Tipoexame', array('id' => 'tipoexameID', 'title' => 'CTRL + Click (para selecionar mais de um)', 'label' => 'Escolha os tipos de exame', 'type' => 'select', 'multiple' => true));
 //    echo $this->Form->input('tipografico', array('id' => 'tipograficoID', 'options' => $tipografico, 'type' => 'select', 'label' => 'Tipos de gráfico'));
@@ -43,6 +44,7 @@
                 },
                 type: "post",
                 url: "\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
+//                url: "http://localhost/savess_cap\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
             });
         });
 //        $("#categoriaID").change(function() {

@@ -23,6 +23,13 @@ class MenusController extends AppController {
      * index method
      */
     public function index() {
+
+        $dadosUser = $this->Session->read();
+
+        if ($dadosUser['Auth']['User']['adminmaster'] <> 1) {
+            $this->redirect(array('controller' => 'Homes', 'action' => 'index'));
+        }
+
         $this->Menu->recursive = 0;
         $this->Paginator->settings = array(
             'order' => array('menu' => 'asc')

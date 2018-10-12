@@ -33,7 +33,7 @@ class CategoriasController extends AppController {
                 array(
                     'filter1' => array(
                         'Categoria.descricao' => array(
-                            'operator' => 'ILIKE',
+                            'operator' => 'LIKE',
                             'value' => array(
                                 'before' => '%',
                                 'after' => '%'
@@ -49,8 +49,8 @@ class CategoriasController extends AppController {
         );
 
         foreach ($this->Filter->getConditions() as $key => $item) :
-            if ($key == 'Categoria.descricao ILIKE') {
-                $conditions[] = 'Categoria.descricao ILIKE ' . "'%" . $item . "%'";
+            if ($key == 'Categoria.descricao LIKE') {
+                $conditions[] = 'Categoria.descricao LIKE ' . "'%" . $item . "%'";
 //                $conditions[] = 'Categoria.descricao ILIKE ' . "'%" . $item . "%'" . ' OR ' . 'Categoriapai.descricao ILIKE ' . "'%" . $item . "%'";
             }
             if ($key == 'Categoria.ativo =') {
@@ -156,7 +156,7 @@ class CategoriasController extends AppController {
         $categorias_pai = $this->Categoria->find('list', array('fields' => array('id', 'descricao'),
             'conditions' => array('empresa_id' => $empresa_id, 'categoria_pai_id IS NULL')));
         $this->set(compact('categorias_pai'));
-        debug($categorias_pai);
+
 //        $tipoexames = $this->Categoria->Tipoexame->find('list', array('fields' => array('id', 'descricao'),
 //            'conditions' => array('empresa_id' => $empresa_id),
 //            'order' => array('descricao')));
@@ -194,7 +194,7 @@ class CategoriasController extends AppController {
         }
 
         $result = $this->Categoria->query('select count(*) as cont
-                                             from public.categorias
+                                             from categorias
                                             where categoria_pai_id = ' . $id);
         if ($result[0][0]['cont'] > 0) {
             $this->Session->setFlash('Categoria pai não pode ser deletada.', 'default', array('class' => 'mensagem_erro'));

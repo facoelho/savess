@@ -29,10 +29,18 @@ class EmpresasController extends AppController {
     public function index() {
         $dadosUser = $this->Session->read();
         $this->Empresa->recursive = 0;
-        $this->Paginator->settings = array(
-            'conditions' => array('holding_id' => $dadosUser['Auth']['User']['holding_id']),
-            'order' => array('razaosocial' => 'asc')
-        );
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 1) {
+            $this->Paginator->settings = array(
+                'conditions' => array('holding_id' => $dadosUser['Auth']['User']['holding_id']),
+                'order' => array('razaosocial' => 'asc')
+            );
+        } else {
+            $this->Paginator->settings = array(
+                'conditions' => array('Empresa.id' => $dadosUser['empresa_id']),
+                'order' => array('razaosocial' => 'asc')
+            );
+        }
         $this->set('empresas', $this->Paginator->paginate('Empresa'));
     }
 

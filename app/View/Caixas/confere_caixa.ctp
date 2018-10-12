@@ -20,7 +20,13 @@ $retiradas = 0;
         <tr>
             <td><?php echo $item['Categoria']['descricao']; ?>&nbsp;</td>
             <td><?php echo $item['Lancamento']['descricao']; ?>&nbsp;</td>
-            <td><?php echo number_format($item['Lancamento']['valor'], 2, ",", ""); ?>&nbsp;</td>
+            <?php if ($item['Categoria']['tipo'] == 'E') { ?>
+                <td><font color="blue"><?php echo number_format($item['Lancamento']['valor'], 2, ',', '.'); ?>&nbsp;</font></td>
+            <?php } elseif ($item['Categoria']['tipo'] == 'S') { ?>
+                <td><font color="red"><?php echo number_format($item['Lancamento']['valor'], 2, ',', '.'); ?>&nbsp;</font></td>
+            <?php } elseif ($item['Categoria']['tipo'] == 'R') { ?>
+                <td><font color="green"><?php echo number_format($item['Lancamento']['valor'], 2, ',', '.'); ?>&nbsp;</font></td>
+            <?php } ?>
             <td><?php echo $item['User']['id'] . ' - ' . $item['User']['nome'] . ' ' . $item['User']['sobrenome']; ?>&nbsp;</td>
             <td><?php echo date('d/m/Y H:i', strtotime($item['Lancamento']['created'])); ?>&nbsp;</td>
             <td><?php echo $item['Categoria']['tipo']; ?>&nbsp;</td>
@@ -47,12 +53,12 @@ $retiradas = 0;
 <br><br>
 <table cellpadding="0" cellspacing="0">
     <tr>
-        <td><?php echo '<b>' . 'Entradas: ' . '</b>' . number_format($entradas, 2, ",", ""); ?>&nbsp;</td>
+        <td><font color="blue"><?php echo '<b>' . 'Entradas: ' . '</b>' . number_format($entradas, 2, ",", "."); ?>&nbsp;</font></td>
     <tr>
     <tr>
-        <td><?php echo '<b>' . 'Saídas: ' . '</b>' . number_format($saidas, 2, ",", ""); ?>&nbsp;</td>
+        <td><font color="red"><?php echo '<b>' . 'Saídas: ' . '</b>' . number_format($saidas, 2, ",", "."); ?>&nbsp;</font></td>
     </tr>
     <tr>
-        <td><?php echo '<b>' . 'Retiradas: ' . '</b>' . number_format($retiradas, 2, ",", ""); ?>&nbsp;</td>
+        <td><font color="green"><?php echo '<b>' . 'Retiradas: ' . '</b>' . number_format($retiradas, 2, ",", "."); ?>&nbsp;</font></td>
     </tr>
 </table>

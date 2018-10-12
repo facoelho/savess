@@ -21,7 +21,7 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
         echo $this->Form->input('adminholding', array('value' => 2, 'type' => 'hidden'));
     }
 
-    echo $this->Form->input('username', array('type' => 'hidden'));
+//    echo $this->Form->input('username', array('type' => 'hidden'));
     ?>
 </fieldset>
 <?php echo $this->Form->end(__('Adicionar')); ?>

@@ -89,7 +89,7 @@ class LancamentosController extends AppController {
         if ($this->request->is('post')) {
 
             try {
-                $this->Lancamento->begin();
+//                $this->Lancamento->begin();
 
                 $this->request->data['Lancamento']['caixa_id'] = $caixa_id;
                 $this->request->data['Lancamento']['user_id'] = $dadosUser['Auth']['User']['id'];
@@ -121,8 +121,7 @@ class LancamentosController extends AppController {
 //                                                 set saldo = ' . $saldo_caixa[0][0]['saldo'] . '
 //                                               where caixa_id = ' . $caixa_id . '
 //                                                and id = ' . $ultimo_id);
-
-                    $this->Lancamento->commit();
+//                    $this->Lancamento->commit();
                     $this->Session->setFlash('Lançamento adicionado com sucesso!', 'default', array('class' => 'mensagem_sucesso'));
                     $this->redirect(array('controller' => 'Lancamentos', 'action' => 'add/' . $caixa_id));
                 } else {
@@ -216,16 +215,16 @@ class LancamentosController extends AppController {
             if ($this->Lancamento->save($this->request->data)) {
 
                 $ultimo_id = $this->Lancamento->query('select max(id) as id
-                                                         from public.lancamentos
+                                                         from lancamentos
                                                         where caixa_id = ' . $this->request->data['Lancamento']['caixa_id']);
 
-                $this->Lancamento->query('update public.caixas
+                $this->Lancamento->query('update caixas
                                              set saldo = saldo - ' . $this->request->data['Lancamento']['valor'] . '
                                            where id = ' . $this->request->data['Lancamento']['caixa_id']);
 
-                $saldo_caixa = $this->Lancamento->query('select saldo from public.caixas where id = ' . $this->request->data['Lancamento']['caixa_id']);
+                $saldo_caixa = $this->Lancamento->query('select saldo from caixas where id = ' . $this->request->data['Lancamento']['caixa_id']);
 
-                $this->Lancamento->query('update public.lancamentos
+                $this->Lancamento->query('update lancamentos
                                                  set saldo = ' . $saldo_caixa[0][0]['saldo'] . '
                                                where caixa_id = ' . $this->request->data['Lancamento']['caixa_id'] . '
                                                 and id = ' . $ultimo_id[0][0]['id']);

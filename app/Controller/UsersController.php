@@ -28,8 +28,15 @@ class UsersController extends AppController {
         $this->set('adminholding', $dadosUser['Auth']['User']['adminholding']);
 
         $this->User->recursive = 0;
+
         if ($dadosUser['Auth']['User']['adminmaster'] == 1) {
             $this->Paginator->settings = array(
+                'order' => array('ultimoacesso' => 'desc',
+                    'ultimoacesso' => 'desc',)
+            );
+        } elseif ($dadosUser['Auth']['User']['adminholding'] == 1) {
+            $this->Paginator->settings = array(
+                'conditions' => array('Holding.id' => $dadosUser['Auth']['User']['holding_id']),
                 'order' => array('ultimoacesso' => 'desc',
                     'ultimoacesso' => 'desc',)
             );
@@ -184,7 +191,7 @@ class UsersController extends AppController {
 
         if ($this->request->is('post')) {
             $this->User->create();
-            $this->request->data['User']['username'] = $this->request->data['User']['email'];
+//            $this->request->data['User']['username'] = $this->request->data['User']['email'];
             if ($this->User->save($this->request->data)) {
                 $this->Session->setFlash('Usuário salvo com sucesso.', 'default', array('class' => 'mensagem_sucesso'));
                 $this->redirect(array('action' => 'index'));
@@ -217,7 +224,7 @@ class UsersController extends AppController {
         $this->set(compact('holdings'));
 
         if ($this->request->is('post') || $this->request->is('put')) {
-            $this->request->data['User']['username'] = $this->request->data['User']['email'];
+//            $this->request->data['User']['username'] = $this->request->data['User']['email'];
             if ($this->User->save($this->request->data)) {
                 $this->Session->setFlash('Usuário alterado com sucesso.', 'default', array('class' => 'mensagem_sucesso'));
                 $this->redirect(array('action' => 'index'));
@@ -280,6 +287,33 @@ class UsersController extends AppController {
                 }
             }
         }
+    }
+
+    public function backup() {
+
+        $usuario = 'postgres';
+        $senha = 'sisagro';
+        $banco = 'savess';
+        $HOST = 'localhost';
+        $porta = 5432;
+        $path_back = "webroot/files/";
+        $cmd = "PGPASSWORD=" . $senha . " pg_dump -i -h " . $HOST . " -p " . $porta . " -U " . $usuario . " -F c -b -v -f '" . $path_back . $banco . ".sql' " . $banco;
+
+// Executa o comando pg_dump que esta na variável cmd
+        shell_exec($cmd);
+
+// Compacta o arquivo gerado pelo comando para tar.gz
+        shell_exec("tar -zcf " . $path_back . $banco . date("Ymd") . ".tar.gz " . $path_back . "*");
+//
+// As linhas abaixo forçam o download do arquivo
+        $link = $path_back . $banco . date("Ymd") . ".tar.gz";
+        header("Content-Disposition: attachment; filename=" . $banco . date("Ymd") . ".tar.gz");
+        header("Content-Type: application/octet-stream");
+        header("Content-Length: " . filesize($link));
+        readfile($link);
+
+// Apaga o arquivo gerado
+        shell_exec("rm -rf " . $path_back . "*");
     }
 
     public function validaPlano($holding_id, $plano_id) {

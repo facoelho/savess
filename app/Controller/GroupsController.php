@@ -27,10 +27,17 @@ class GroupsController extends AppController {
     public function index() {
         $dadosUser = $this->Session->read();
         $this->Group->recursive = 0;
-        $this->Paginator->settings = array(
-            'conditions' => array('holding_id' => $dadosUser['Auth']['User']['holding_id']),
-            'order' => array('name' => 'asc')
-        );
+        if ($dadosUser['Auth']['User']['adminmaster'] == 1) {
+            $this->Paginator->settings = array(
+                'order' => array('name' => 'asc')
+            );
+        } else {
+            $this->Paginator->settings = array(
+                'conditions' => array('holding_id' => $dadosUser['Auth']['User']['holding_id']),
+                'order' => array('name' => 'asc')
+            );
+        }
+
         $this->set('groups', $this->Paginator->paginate('Group'));
     }
 
@@ -102,9 +109,9 @@ class GroupsController extends AppController {
         $holding_id = $dadosUser['Auth']['User']['Holding']['id'];
 
         $group = $this->Group->read(null, $id);
-        if ($group['Holding']['id'] != $dadosUser['Auth']['User']['holding_id']) {
-            throw new NotFoundException(__('Grupo inválido.'));
-        }
+//        if ($group['Holding']['id'] != $dadosUser['Auth']['User']['holding_id']) {
+//            throw new NotFoundException(__('Grupo inválido.'));
+//        }
 
         $this->loadModel('Holdingmenu');
         $this->Holdingmenu->recursive = 1;

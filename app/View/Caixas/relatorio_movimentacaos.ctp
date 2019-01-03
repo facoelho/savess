@@ -15,13 +15,13 @@
         <th><?php echo 'Valor'; ?></th>
     </tr>
     <?php foreach ($result as $key => $item): ?>
-        <?php if ($mesano <> $item[0]['mesano']) { ?>
+        <?php if ($mesano <> $item[0]['mes'] . '-' . $item[0]['ano']) { ?>
             <?php if ($cont > 0) { ?>
-                                                            <!--                <tr>
-                                                                                <td><?php echo ''; ?></td>
-                                                                                <td><?php echo 'Lucro'; ?></td>
-                                                                                <td><?php echo number_format($entradas - $saidas, 2, ",", "."); ?></td>
-                                                                            </tr>-->
+                                                                                                                                    <!--                <tr>
+                                                                                                                                                        <td><?php echo ''; ?></td>
+                                                                                                                                                        <td><?php echo 'Lucro'; ?></td>
+                                                                                                                                                        <td><?php echo number_format($entradas - $saidas, 2, ",", "."); ?></td>
+                                                                                                                                                    </tr>-->
                 <tr>
                     <td><?php echo ''; ?></td>
                     <td><b><?php echo 'Saldo'; ?></b></td>
@@ -34,7 +34,7 @@
                 <?php $retiradas = 0; ?>
             <?php } ?>
             <tr>
-                <td><b><?php echo $item[0]['mesano']; ?></b></td>
+                <td><b><?php echo $item[0]['mes'] . '-' . $item[0]['ano']; ?></b></td>
                 <td colspan="3"><?php echo ''; ?></td>
             </tr>
         <?php } ?>
@@ -59,7 +59,7 @@
                 <td><?php echo number_format($entradas - $saidas, 2, ",", "."); ?></td>
             </tr>
         <?php } ?>
-        <?php $mesano = $item[0]['mesano']; ?>
+        <?php $mesano = $item[0]['mes'] . '-' . $item[0]['ano']; ?>
         <?php $cont++; ?>
     <?php endforeach; ?>
 <!--    <tr>

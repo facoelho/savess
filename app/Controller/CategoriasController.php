@@ -27,6 +27,15 @@ class CategoriasController extends AppController {
         $dadosUser = $this->Session->read();
         $conditions = array();
 
+        $empresa_id = $dadosUser['empresa_id'];
+
+        $categorias_pai = $this->Categoria->find('list', array('fields' => array('id', 'descricao'),
+            'conditions' => array('empresa_id' => $empresa_id, 'categoria_pai_id IS NULL', 'ativo' => 'S'),
+            'order' => array('descricao')));
+        $this->set('categorias_pai', $categorias_pai);
+
+        $tipo = array('S' => 'Saida', 'E' => 'Entrada', 'R' => 'Retirada');
+
         $ativo = array('S' => 'SIM', 'N' => 'NÃO');
 
         $this->Filter->addFilters(
@@ -41,6 +50,21 @@ class CategoriasController extends AppController {
                         )
                     ),
                     'filter2' => array(
+                        'Categoria.categoria_pai_id' => array(
+                            'select' => $categorias_pai
+                        ),
+                    ),
+                    'cat' => array(
+                        'categoria' => array(
+                            'select' => ''
+                        ),
+                    ),
+                    'filter4' => array(
+                        'Categoria.tipo' => array(
+                            'select' => $tipo
+                        ),
+                    ),
+                    'filter3' => array(
                         'Categoria.ativo' => array(
                             'select' => $ativo
                         ),
@@ -52,6 +76,15 @@ class CategoriasController extends AppController {
             if ($key == 'Categoria.descricao LIKE') {
                 $conditions[] = 'Categoria.descricao LIKE ' . "'%" . $item . "%'";
 //                $conditions[] = 'Categoria.descricao ILIKE ' . "'%" . $item . "%'" . ' OR ' . 'Categoriapai.descricao ILIKE ' . "'%" . $item . "%'";
+            }
+            if ($key == 'Categoria.categoria_pai_id =') {
+                $conditions[] = 'Categoria.categoria_pai_id = ' . $item;
+            }
+            if ($key == 'categoria =') {
+                $conditions[] = 'Categoria.id = ' . $item;
+            }
+            if ($key == 'Categoria.tipo =') {
+                $conditions[] = 'Categoria.tipo =  ' . "'" . $item . "'";
             }
             if ($key == 'Categoria.ativo =') {
                 $conditions[] = 'Categoria.ativo = ' . "'" . $item . "'";
@@ -239,7 +272,8 @@ class CategoriasController extends AppController {
     public function buscaCategorias($chave, $categoria_paiID) {
 
         $this->layout = 'ajax';
-
+        debug('chegou');
+        debug($categoria_paiID);
         $dadosUser = $this->Session->read();
         $empresa_id = $dadosUser['empresa_id'];
 

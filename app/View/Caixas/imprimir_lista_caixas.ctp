@@ -1,6 +1,11 @@
 <?php $this->layout = 'naoLogado'; ?>
 <?php $dtcaixa = ''; ?>
 <?php $total = 0; ?>
+<?php
+$entradas = 0;
+$saidas = 0;
+$retiradas = 0;
+?>
 
 <table cellpadding="0" cellspacing="0">
     <tr>
@@ -28,10 +33,24 @@
             <td><?php echo date('d/m/Y H:i', strtotime($item['Lancamento']['created'])); ?>&nbsp;</td>
             <td><?php echo $item['Categoria']['tipo']; ?>&nbsp;</td>
         </tr>
-        <?php $total = $total + $item['Lancamento']['valor'] ?>
+        <?php if ($item['Categoria']['tipo'] == 'E') { ?>
+            <?php $entradas = $entradas + $item['Lancamento']['valor']; ?>
+        <?php } elseif ($item['Categoria']['tipo'] == 'S') { ?>
+            <?php $saidas = $saidas + $item['Lancamento']['valor']; ?>
+        <?php } elseif ($item['Categoria']['tipo'] == 'R') { ?>
+            <?php $retiradas = $retiradas + $item['Lancamento']['valor']; ?>
+        <?php } ?>
     <?php endforeach; ?>
+</table>
+<br><br>
+<table cellpadding="0" cellspacing="0">
     <tr>
-        <td colspan="3"><b><?php echo ''; ?>&nbsp;</b></td>
-        <td colspan="3"><b><?php echo number_format($total, 2, ",", "."); ?>&nbsp;</b></td>
+        <td><font color="blue"><?php echo '<b>' . 'Entradas: ' . '</b>' . number_format($entradas, 2, ",", "."); ?>&nbsp;</font></td>
+    <tr>
+    <tr>
+        <td><font color="red"><?php echo '<b>' . 'Saídas: ' . '</b>' . number_format($saidas, 2, ",", "."); ?>&nbsp;</font></td>
+    </tr>
+    <tr>
+        <td><font color="green"><?php echo '<b>' . 'Retiradas: ' . '</b>' . number_format($retiradas, 2, ",", "."); ?>&nbsp;</font></td>
     </tr>
 </table>

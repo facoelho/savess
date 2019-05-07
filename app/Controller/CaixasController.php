@@ -1660,7 +1660,6 @@ class CaixasController extends AppController {
                                           and DATE_FORMAT(caixas.dtcaixa, ' . "'%Y-%m'" . ') BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . "'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . "'" . '
                                           and caixas.empresa_id = ' . $empresa_id . '
                                           and lancamentos.categoria_id = categorias.id
-                                          and categorias.ativo = ' . "'S'" . '
                                         group by SUBSTR(caixas.dtcaixa, 1, 4), SUBSTR(caixas.dtcaixa, 6, 2), categorias.tipo
                                         order by SUBSTR(caixas.dtcaixa, 1, 4) asc, SUBSTR(caixas.dtcaixa, 6, 2) asc, ordem asc');
 

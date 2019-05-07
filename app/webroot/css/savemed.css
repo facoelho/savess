@@ -163,8 +163,8 @@ body {
 }
 
 #topoleftpcli img {
-    width: 160px;
-    height: 120px;
+    width: 145px;
+    height: 105px;
     margin-top: 0px;
     margin-left: 0px;
     margin-bottom: 0px;
@@ -208,7 +208,7 @@ body {
     /*    width: 100%;
         margin-left: auto;
         margin-right: auto;*/
-    width: 13.7%;
+    width: 13.5%;
     height: auto;
     float: right;
     font: 13px tahoma, arial;
@@ -495,7 +495,7 @@ th a.desc:after {
     content: ' ⇡';
 }
 table tr td {
-    padding: 6px;
+    padding: 5px;
     text-align: left;
     vertical-align: top;
     border-bottom:1px solid #ddd;
@@ -569,7 +569,7 @@ table td.actions a {
     font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
     padding: 1%;
     vertical-align: text-bottom;
-    width: 150px;
+    width: 130px;
     height: 40px;
 }
 

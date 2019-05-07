@@ -7,9 +7,16 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
 <div id="filtroGrade">
     <?php
     echo $this->Search->create();
+    echo $this->Search->create();
     echo $this->Search->input('filter1', array('class' => 'input-box', 'placeholder' => 'Descrição'));
     echo $this->Html->image("separador.png");
-    echo $this->Search->input('filter2', array('class' => 'select-box', 'placeholder' => 'Ativo', 'empty' => '-- Ativo --'));
+    echo $this->Search->input('filter2', array('id' => 'categorias_paiID', 'class' => 'select-box', 'placeholder' => 'Categoria pai', 'empty' => '-- Categoria pai --'));
+    echo $this->Html->image("separador.png");
+//    echo $this->Search->input('cat', array('id' => 'categoria', 'class' => 'select-box', 'empty' => '-- Categorias --'));
+//    echo $this->Html->image("separador.png");
+    echo $this->Search->input('filter4', array('id' => 'tipoID', 'class' => 'select-box', 'empty' => '-- Tipo --'));
+    echo $this->Html->image("separador.png");
+    echo $this->Search->input('filter3', array('class' => 'select-box', 'placeholder' => 'Ativo', 'empty' => '-- Ativo --'));
     echo $this->Html->image("separador.png");
     ?>
     <input type="submit" value="Filtrar" class="botaoFiltro"/>
@@ -57,3 +64,21 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
     }
     ?>
 </p>
+
+<script type="text/javascript">
+
+    jQuery(document).ready(function() {
+
+        $("#categorias_paiID").change(function() {
+            $.ajax({async: true,
+                data: $("#categorias_paiID").serialize(),
+                dataType: "html",
+                success: function(data, textStatus) {
+                    $("#categoriaID").html(data);
+                },
+                type: "post",
+                url: "\/Categorias\/buscaCategorias\/Categoria\/" + $("#categorias_paiID option:selected").val()
+            });
+        });
+    });
+</script>

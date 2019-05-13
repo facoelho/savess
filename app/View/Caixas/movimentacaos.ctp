@@ -44,16 +44,5 @@
                 url: "\/savess_cap/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
             });
         });
-//        $("#categoriaID").change(function() {
-//            $.ajax({async: true,
-//                data: $("#categoriaID").serialize(),
-//                dataType: "html",
-//                success: function(data, textStatus) {
-//                    $("#tipoexameID").html(data);
-//                },
-//                type: "post",
-//                url: "\/savess_cap/Tipoexames\/buscaRelatoriotipoexames\/Caixa\/" + $("#categoriaID option:selected").val()
-//            });
-//        });
     });
 </script>

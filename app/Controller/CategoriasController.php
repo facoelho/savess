@@ -25,6 +25,12 @@ class CategoriasController extends AppController {
     public function index() {
 
         $dadosUser = $this->Session->read();
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $this->Session->setFlash('Usuário não tem acesso a este módulo.', 'default', array('class' => 'mensagem_erro'));
+            $this->redirect(array('controller' => 'homes', 'action' => 'index'));
+        }
+
         $conditions = array();
 
         $empresa_id = $dadosUser['empresa_id'];
@@ -122,6 +128,11 @@ class CategoriasController extends AppController {
             $this->redirect(array('action' => 'index'));
         }
 
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $this->Session->setFlash('Usuário não tem acesso a este módulo.', 'default', array('class' => 'mensagem_erro'));
+            $this->redirect(array('controller' => 'homes', 'action' => 'index'));
+        }
+
         $dadosUser = $this->Session->read();
         $empresa_id = $dadosUser['empresa_id'];
 
@@ -141,6 +152,12 @@ class CategoriasController extends AppController {
     public function add() {
 
         $dadosUser = $this->Session->read();
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $this->Session->setFlash('Usuário não tem acesso a este módulo.', 'default', array('class' => 'mensagem_erro'));
+            $this->redirect(array('controller' => 'homes', 'action' => 'index'));
+        }
+
         $empresa_id = $dadosUser['empresa_id'];
         $this->set(compact('empresa_id'));
 
@@ -183,6 +200,12 @@ class CategoriasController extends AppController {
         }
 
         $dadosUser = $this->Session->read();
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $this->Session->setFlash('Usuário não tem acesso a este módulo.', 'default', array('class' => 'mensagem_erro'));
+            $this->redirect(array('controller' => 'homes', 'action' => 'index'));
+        }
+
         $empresa_id = $dadosUser['empresa_id'];
         $this->set(compact('empresa_id'));
 
@@ -224,6 +247,11 @@ class CategoriasController extends AppController {
         if (!$this->Categoria->exists()) {
             $this->Session->setFlash('Registro não encontrado.', 'default', array('class' => 'mensagem_erro'));
             $this->redirect(array('action' => 'index'));
+        }
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $this->Session->setFlash('Usuário não tem acesso a este módulo.', 'default', array('class' => 'mensagem_erro'));
+            $this->redirect(array('controller' => 'homes', 'action' => 'index'));
         }
 
         $result = $this->Categoria->query('select count(*) as cont

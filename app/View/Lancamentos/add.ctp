@@ -25,17 +25,31 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
 
         $("#valorID").maskMoney({showSymbol: false, decimal: ",", thousands: "", precision: 2});
 
-        $("#categorias_paiID").change(function() {
-            $.ajax({async: true,
-                data: $("#categorias_paiID").serialize(),
-                dataType: "html",
-                success: function(data, textStatus) {
-                    $("#categoriaID").html(data);
-                },
-                type: "post",
-                url: "\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
+        if (window.location.host !== 'localhost') {
+            $("#categorias_paiID").change(function() {
+                $.ajax({async: true,
+                    data: $("#categorias_paiID").serialize(),
+                    dataType: "html",
+                    success: function(data, textStatus) {
+                        $("#categoriaID").html(data);
+                    },
+                    type: "post",
+                    url: "\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
+                });
             });
-        });
+        } else {
+            $("#categorias_paiID").change(function() {
+                $.ajax({async: true,
+                    data: $("#categorias_paiID").serialize(),
+                    dataType: "html",
+                    success: function(data, textStatus) {
+                        $("#categoriaID").html(data);
+                    },
+                    type: "post",
+                    url: "\/savess_cap\/Categorias\/buscaCategorias\/Lancamento\/" + $("#categorias_paiID option:selected").val()
+                });
+            });
+        }
 
 //        $("#categoriaID").change(function() {
 //            $.ajax({async: true,

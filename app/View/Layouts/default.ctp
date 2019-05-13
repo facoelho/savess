@@ -84,12 +84,22 @@
                         </span>
                         <br></br>
                         <?php if (count($dadosUser['empresasCombo']) > 1) { ?>
-                            <select name="trocaEmpresa" id="trocaEmpresa" class="trocaEmpresa" title="Trocar a empresa" onChange="location.href = 'http://www.savess.com.br/users/trocaEmpresa/' + this.value;">
-                                <option value="">Alterar empresa</option>
-                                <?php for ($i = 0; $i < count($dadosUser['empresasCombo']); $i++) { ?>
-                                    <option value="<?php echo $dadosUser['empresasCombo'][$i]['Empresa']['id']; ?>"><?php echo $dadosUser['empresasCombo'][$i]['Empresa']['nomefantasia']; ?></option>
-                                <?php } ?>
-                            </select>
+                            <?php $array_url = explode('/', $this->here); ?>
+                            <?php if (array_search('savess_cap', $array_url)) { ?>
+                                <select name="trocaEmpresa" id="trocaEmpresa" class="trocaEmpresa" title="Trocar a empresa" onChange="location.href = 'http://localhost/savess_cap/users/trocaEmpresa/' + this.value;">
+                                    <option value="">Alterar empresa</option>
+                                    <?php for ($i = 0; $i < count($dadosUser['empresasCombo']); $i++) { ?>
+                                        <option value="<?php echo $dadosUser['empresasCombo'][$i]['Empresa']['id']; ?>"><?php echo $dadosUser['empresasCombo'][$i]['Empresa']['nomefantasia']; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <?php } else { ?>
+                                <select name="trocaEmpresa" id="trocaEmpresa" class="trocaEmpresa" title="Trocar a empresa" onChange="location.href = 'http://www.savess.com.br/users/trocaEmpresa/' + this.value;">
+                                    <option value="">Alterar empresa</option>
+                                    <?php for ($i = 0; $i < count($dadosUser['empresasCombo']); $i++) { ?>
+                                        <option value="<?php echo $dadosUser['empresasCombo'][$i]['Empresa']['id']; ?>"><?php echo $dadosUser['empresasCombo'][$i]['Empresa']['nomefantasia']; ?></option>
+                                    <?php } ?>
+                                </select>
+                            <?php } ?>
                         <?php } ?>
                 </div>
                 <?php //echo $title_for_layout; ?>

@@ -15,6 +15,8 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
         //echo $this->Form->input('adminmaster', array ('type' => 'select','options' => $opcoes, 'label' => 'Administrador master?', 'empty' => ''));
         echo $this->Form->input('adminmaster', array('value' => 2, 'type' => 'hidden'));
         echo $this->Form->input('adminholding', array('type' => 'select', 'options' => $opcoes, 'label' => 'Administrador da holding?', 'empty' => ''));
+    } elseif ($adminholding == 1) {
+        echo $this->Form->input('adminholding', array('type' => 'select', 'options' => $opcoes, 'label' => 'Administrador da holding?', 'empty' => ''));
     }
     echo $this->Form->input('username', array('type' => 'hidden'));
     ?>

@@ -16,6 +16,8 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
     echo $this->Html->image("separador.png");
     echo $this->Search->input('filter5', array('id' => 'tipoID', 'class' => 'select-box', 'empty' => '-- Tipo --'));
     echo $this->Html->image("separador.png");
+    echo $this->Search->input('filter3', array('id' => 'statusID', 'class' => 'select-box', 'empty' => '-- Status caixa --'));
+    echo $this->Html->image("separador.png");
     echo $this->Search->input('filter4', array('class' => 'input-box', 'id' => 'data1', 'placeholder' => 'dia/mês/ano', 'title' => 'Data inicial'), array('class' => 'input-box', 'id' => 'data2', 'placeholder' => 'dia/mês/ano', 'title' => 'Data final'));
     echo $this->Html->image("separador.png");
     ?>
@@ -44,11 +46,14 @@ echo $this->Html->link($this->Html->image("botoes/add.png", array("alt" => "Adic
                 <div id="botoes">
                     <?php
                     echo $this->Html->link($this->Html->image("botoes/printer.png", array("alt" => "Conferência de caixa", "title" => "Conferência de caixa")), array('action' => 'confere_caixa', $item['Caixa']['id']), array('escape' => false, 'target' => '_blank'));
-                    if ($adminholding == 1) {
-                        if ($item['Caixa']['status'] == 'A') {
-                            echo $this->Html->link($this->Html->image("botoes/pagar.png", array("alt" => "Efetuar lançamento no caixa", "title" => "Efetuar lançamento no caixa")), array('controller' => 'Lancamentos', 'action' => 'add', $item['Caixa']['id']), array('escape' => false));
-                        }
+                    if ($item['Caixa']['status'] == 'A') {
+                        echo $this->Html->link($this->Html->image("botoes/pagar.png", array("alt" => "Efetuar lançamento no caixa", "title" => "Efetuar lançamento no caixa")), array('controller' => 'Lancamentos', 'action' => 'add', $item['Caixa']['id']), array('escape' => false));
                         echo $this->Html->link($this->Html->image("botoes/editar.gif", array("alt" => "Editar", "title" => "Editar")), array('action' => 'edit', $item['Caixa']['id']), array('escape' => false));
+                    } elseif ($adminholding == 1) {
+                        echo $this->Html->link($this->Html->image("botoes/pagar.png", array("alt" => "Efetuar lançamento no caixa", "title" => "Efetuar lançamento no caixa")), array('controller' => 'Lancamentos', 'action' => 'add', $item['Caixa']['id']), array('escape' => false));
+                        echo $this->Html->link($this->Html->image("botoes/editar.gif", array("alt" => "Editar", "title" => "Editar")), array('action' => 'edit', $item['Caixa']['id']), array('escape' => false));
+                    }
+                    if ($adminholding == 1) {
                         echo $this->Html->link($this->Html->image('botoes/excluir.gif', array('alt' => 'Exluir', 'title' => 'Exluir')), array('action' => 'delete', $item['Caixa']['id']), array('escape' => false), __('Você realmete deseja apagar esse item?')
                         );
                     }

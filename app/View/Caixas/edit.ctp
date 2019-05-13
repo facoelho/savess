@@ -7,7 +7,7 @@ echo $this->Html->link($this->Html->image("botoes/retornar.png", array("alt" => 
 <fieldset>
     <?php
     echo $this->Form->input('dtcaixa', array('id' => 'dtcaixa', 'class' => 'data', 'type' => 'text', 'label' => 'Data do caixa', 'readonly'));
-    echo $this->Form->input('saldo', array('id' => 'saldo', 'readonly'));
+//    echo $this->Form->input('saldo', array('id' => 'saldo', 'readonly'));
     echo $this->Form->input('status', array('id' => 'statusID', 'type' => 'select', 'options' => $status, 'label' => 'Status'));
     echo $this->Form->input('empresa_id', array('type' => 'hidden', 'value' => $empresa_id));
     ?>

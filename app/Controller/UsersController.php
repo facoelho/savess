@@ -178,6 +178,7 @@ class UsersController extends AppController {
 //        }
 
         $this->set('adminmaster', $this->Auth->user('adminmaster'));
+        $this->set('adminholding', $this->Auth->user('adminholding'));
         $this->set('holding_id', $this->Auth->user('holding_id'));
 
         $holdings = $this->User->Holding->find('list', array(
@@ -215,6 +216,7 @@ class UsersController extends AppController {
         $this->set('opcoes', $opcoes);
 
         $this->set('adminmaster', $this->Auth->user('adminmaster'));
+        $this->set('adminholding', $this->Auth->user('adminholding'));
         $this->set('holding_id', $this->Auth->user('holding_id'));
 
         $holdings = $this->User->Holding->find('list', array(

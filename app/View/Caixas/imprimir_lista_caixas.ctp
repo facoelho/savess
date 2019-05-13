@@ -31,7 +31,13 @@ $retiradas = 0;
             <?php } ?>
             <td><?php echo $item['User']['id'] . ' - ' . $item['User']['nome'] . ' ' . $item['User']['sobrenome']; ?>&nbsp;</td>
             <td><?php echo date('d/m/Y H:i', strtotime($item['Lancamento']['created'])); ?>&nbsp;</td>
-            <td><?php echo $item['Categoria']['tipo']; ?>&nbsp;</td>
+            <?php if ($item['Categoria']['tipo'] == 'E') { ?>
+                <td><font color="blue"><?php echo $item['Categoria']['tipo']; ?>&nbsp;</font></td>
+            <?php } elseif ($item['Categoria']['tipo'] == 'S') { ?>
+                <td><font color="red"><?php echo $item['Categoria']['tipo']; ?>&nbsp;</font></td>
+            <?php } elseif ($item['Categoria']['tipo'] == 'R') { ?>
+                <td><font color="green"><?php echo $item['Categoria']['tipo']; ?>&nbsp;</font></td>
+            <?php } ?>
         </tr>
         <?php if ($item['Categoria']['tipo'] == 'E') { ?>
             <?php $entradas = $entradas + $item['Lancamento']['valor']; ?>

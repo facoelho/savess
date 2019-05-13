@@ -28,6 +28,8 @@ class CaixasController extends AppController {
      */
     public function index() {
 
+        $conditions = array();
+
         $dadosUser = $this->Session->read();
         $this->set('adminholding', $dadosUser['Auth']['User']['adminholding']);
 
@@ -42,6 +44,12 @@ class CaixasController extends AppController {
         $this->set('categorias_pai', $categorias_pai);
 
         $tipo = array('S' => 'Saida', 'E' => 'Entrada', 'R' => 'Retirada');
+
+        $status = array('A' => 'Aberto', 'F' => 'Fechado');
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $conditions[] = 'Lancamento.user_id = ' . $dadosUser['Auth']['User']['id'];
+        }
 
         $this->Caixa->recursive = -1;
 
@@ -71,6 +79,11 @@ class CaixasController extends AppController {
                             'select' => $tipo
                         ),
                     ),
+                    'filter3' => array(
+                        'Caixa.status' => array(
+                            'select' => $status
+                        ),
+                    ),
                     'filter4' => array(
                         'Caixa.dtcaixa' => array(
                             'operator' => 'BETWEEN',
@@ -98,7 +111,7 @@ class CaixasController extends AppController {
                     'conditions' => array('Lancamento.categoria_id = Categoria.id')
                 )
             ),
-            'conditions' => array('empresa_id' => $dadosUser['empresa_id']),
+            'conditions' => array('empresa_id' => $dadosUser['empresa_id'], $conditions),
             'group' => array('Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Caixa.status'),
             'order' => array('dtcaixa' => 'desc')
         );
@@ -115,10 +128,16 @@ class CaixasController extends AppController {
      */
     public function imprimir_lista_caixas() {
 
+        $conditions = array();
+
         $dadosUser = $this->Session->read();
         $empresa_id = $dadosUser['empresa_id'];
 
         $conditions_filtro_caixa = $this->Session->read('conditions_filtro_caixa');
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $conditions[] = 'Lancamento.user_id = ' . $dadosUser['Auth']['User']['id'];
+        }
 
         $this->Paginator->settings = array(
             'fields' => array('Caixa.id', 'Caixa.dtcaixa', 'Caixa.saldo', 'Lancamento.id', 'Lancamento.descricao', 'Lancamento.valor', 'Lancamento.saldo', 'Lancamento.created', 'User.id', 'User.nome', 'User.sobrenome', 'Categoria.descricao', 'Categoria.tipo'),
@@ -147,7 +166,7 @@ class CaixasController extends AppController {
             'limit' => ''
         );
 
-        $this->Filter->setPaginate('conditions', array($conditions_filtro_caixa));
+        $this->Filter->setPaginate('conditions', array($conditions_filtro_caixa, $conditions));
 
         $this->set('caixas', $this->Paginator->paginate('Caixa'));
     }
@@ -319,18 +338,18 @@ class CaixasController extends AppController {
 
         if ($this->request->is('post') || $this->request->is('put')) {
 
-            if ($this->request->data['Caixa']['status'] == 'A') {
-                $valida_caixa = $this->Caixa->find('list', array(
-                    'conditions' => array('empresa_id' => $empresa_id,
-                        'dtcaixa >=' . "'" . substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2) . "'",
-                )));
-
-                if (!empty($valida_caixa)) {
-                    $this->Session->setFlash('Caixa não pode ser reaberto!', 'default', array('class' => 'mensagem_erro'));
-                    return;
-                }
-            }
-
+//            if ($this->request->data['Caixa']['status'] == 'A') {
+//                $valida_caixa = $this->Caixa->find('list', array(
+//                    'conditions' => array('empresa_id' => $empresa_id,
+//                        'dtcaixa >=' . "'" . substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2) . "'",
+//                )));
+//
+//                if (!empty($valida_caixa)) {
+//                    $this->Session->setFlash('Caixa não pode ser reaberto!', 'default', array('class' => 'mensagem_erro'));
+//                    return;
+//                }
+//            }
+            $this->request->data['Caixa']['dtcaixa'] = substr($this->request->data['Caixa']['dtcaixa'], 6, 4) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 3, 2) . "-" . substr($this->request->data['Caixa']['dtcaixa'], 0, 2);
             if ($this->Caixa->save($this->request->data)) {
                 $this->Session->setFlash('Caixa alterado com sucesso.', 'default', array('class' => 'mensagem_sucesso'));
                 $this->redirect(array('action' => 'index'));
@@ -373,8 +392,23 @@ class CaixasController extends AppController {
      */
     public function confere_caixa($id) {
 
+        $conditions = array();
+
         $dadosUser = $this->Session->read();
+        $empresa_id = $dadosUser['empresa_id'];
         $this->set('adminholding', $dadosUser['Auth']['User']['adminholding']);
+
+        $caixa_id = $this->Caixa->find('list', array('fields' => array('id', 'empresa_id'),
+            'conditions' => array('empresa_id' => $empresa_id, 'id' => $id)));
+
+        if (empty($caixa_id)) {
+            $this->Session->setFlash('Caixa inválido.', 'default', array('class' => 'mensagem_erro'));
+            return;
+        }
+
+        if ($dadosUser['Auth']['User']['adminholding'] == 2) {
+            $conditions[] = 'Lancamento.user_id = ' . $dadosUser['Auth']['User']['id'];
+        }
 
         $this->Caixa->recursive = 0;
         $this->Paginator->settings = array(
@@ -405,7 +439,7 @@ class CaixasController extends AppController {
                     'conditions' => array('Tipoexame.id = Lancamento.tipoexame_id')
                 ),
             ),
-            'conditions' => array('Caixa.empresa_id' => $dadosUser['empresa_id'], 'Caixa.id' => $id),
+            'conditions' => array('Caixa.empresa_id' => $dadosUser['empresa_id'], 'Caixa.id' => $id, $conditions),
             'order' => array('Caixa.dtlancamento' => 'asc'),
             'limit' => '',
         );
@@ -538,7 +572,7 @@ class CaixasController extends AppController {
 
                 $column_chart_linha = new GoogleCharts();
 
-                $column_chart_linha->type('LineChart');
+                $column_chart_linha->type('AreaChart');
 
                 $column_chart_linha->options(array('width' => '80%',
                     'heigth' => '70%',
@@ -813,7 +847,7 @@ class CaixasController extends AppController {
 
             $column_chart_linha = new GoogleCharts();
 
-            $column_chart_linha->type('LineChart');
+            $column_chart_linha->type('AreaChart');
 
             $column_chart_linha->options(array('width' => '80%',
                 'heigth' => '70%',
@@ -1143,7 +1177,7 @@ class CaixasController extends AppController {
 
             $column_chart_linha = new GoogleCharts();
 
-            $column_chart_linha->type('LineChart');
+            $column_chart_linha->type('AreaChart');
 
             $column_chart_linha->options(array('width' => '80%',
                 'heigth' => '70%',
@@ -1456,7 +1490,7 @@ class CaixasController extends AppController {
 
             $column_chart_linha = new GoogleCharts();
 
-            $column_chart_linha->type('LineChart');
+            $column_chart_linha->type('AreaChart');
 
             $column_chart_linha->options(array('width' => '80%',
                 'heigth' => '70%',
@@ -1678,7 +1712,7 @@ class CaixasController extends AppController {
 
         $column_chart_linha = new GoogleCharts();
 
-        $column_chart_linha->type('LineChart');
+        $column_chart_linha->type('AreaChart');
 
         $column_chart_linha->options(array('width' => '80%',
             'heigth' => '70%',

@@ -479,10 +479,18 @@ class CaixasController extends AppController {
 
             if (!empty($this->request->data['Relatorio']['pais'])) {
                 if (empty($this->request->data['Relatorio']['tipo'])) {
-                    $this->Session->setFlash('Tipo de lançamento é obrigatório para listar somente as categorias filhas.', 'default', array('class' => 'mensagem_erro'));
+                    $this->Session->setFlash('O campo "tipo de lançamento" é obrigatório para listar somente as categorias filhas.', 'default', array('class' => 'mensagem_erro'));
                     return;
                 }
             }
+
+            if ($this->request->data['Relatorio']['filhas'] == 'S') {
+                if (empty($this->request->data['Relatorio']['tipo'])) {
+                    $this->Session->setFlash('O campo "tipo de lançamento" é obrigatório para listar somente as categorias filhas.', 'default', array('class' => 'mensagem_erro'));
+                    return;
+                }
+            }
+
             CakeSession::write('relatorio', $this->request->data);
 //            if ($this->request->data['Relatorio']['tipografico'] == 'B') {
             $this->redirect(array('action' => 'relatorio_indices'));
@@ -556,7 +564,7 @@ class CaixasController extends AppController {
 
                 $column_chart->options(array('width' => '80%',
                     'heigth' => '70%',
-                    'title' => 'Relatório Valor Total x Categorias',
+                    'title' => 'Relatório de Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                     'titleTextStyle' => array('color' => 'grenn'),
                     'fontSize' => 12,
@@ -576,7 +584,7 @@ class CaixasController extends AppController {
 
                 $column_chart_linha->options(array('width' => '80%',
                     'heigth' => '70%',
-                    'title' => 'Relatório Valor Total x Categorias pai',
+                    'title' => 'Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                     'titleTextStyle' => array('color' => 'grenn'),
                     'fontSize' => 12,
@@ -589,7 +597,7 @@ class CaixasController extends AppController {
                 //
             $piechart = new GoogleCharts();
                 $piechart->type("PieChart");
-                $piechart->options(array('width' => '80%', 'heigth' => '40%', 'title' => "Relatório Valor Total x Categorias pai", 'titleTextStyle' => array('color' => 'blu'),
+                $piechart->options(array('width' => '80%', 'heigth' => '40%', 'title' => "Valor x Categorias", 'titleTextStyle' => array('color' => 'blu'),
                     'fontSize' => 12));
                 $piechart->columns(array(
                     'categoria' => array(
@@ -716,7 +724,7 @@ class CaixasController extends AppController {
 
             $column_chart->options(array('width' => '80%',
                 'heigth' => '70%',
-                'title' => 'Relatório Valor Total x Categorias pai',
+                'title' => 'Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                 'titleTextStyle' => array('color' => 'grenn'),
                 'fontSize' => 12,
@@ -851,7 +859,7 @@ class CaixasController extends AppController {
 
             $column_chart_linha->options(array('width' => '80%',
                 'heigth' => '70%',
-                'title' => 'Relatório Valor Total x Categorias pai',
+                'title' => 'Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                 'titleTextStyle' => array('color' => 'grenn'),
                 'fontSize' => 12,
@@ -943,7 +951,7 @@ class CaixasController extends AppController {
             //
             $piechart = new GoogleCharts();
             $piechart->type("PieChart");
-            $piechart->options(array('width' => '80%', 'heigth' => '40%', 'title' => "Relatório Valor Total x Categorias pai", 'titleTextStyle' => array('color' => 'blu'),
+            $piechart->options(array('width' => '80%', 'heigth' => '40%', 'title' => "Valor x Categorias", 'titleTextStyle' => array('color' => 'blu'),
                 'fontSize' => 12));
             $piechart->columns(array(
                 'categoria' => array(
@@ -1049,7 +1057,7 @@ class CaixasController extends AppController {
 
             $column_chart->options(array('width' => '80%',
                 'heigth' => '70%',
-                'title' => 'Relatório Valor Total x Categorias pai',
+                'title' => 'Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                 'titleTextStyle' => array('color' => 'grenn'),
                 'fontSize' => 12,
@@ -1181,7 +1189,7 @@ class CaixasController extends AppController {
 
             $column_chart_linha->options(array('width' => '80%',
                 'heigth' => '70%',
-                'title' => 'Relatório Valor Total x Categorias pai',
+                'title' => 'Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                 'titleTextStyle' => array('color' => 'grenn'),
                 'fontSize' => 12,
@@ -1269,7 +1277,7 @@ class CaixasController extends AppController {
             //
             $piechart = new GoogleCharts();
             $piechart->type("PieChart");
-            $piechart->options(array('width' => '80%', 'heigth' => '40%', 'title' => "Valor x Categoria", 'titleTextStyle' => array('color' => 'blu'),
+            $piechart->options(array('width' => '80%', 'heigth' => '40%', 'title' => "Valor x Categorias", 'titleTextStyle' => array('color' => 'blu'),
                 'fontSize' => 12));
             $piechart->columns(array(
                 'categoria' => array(
@@ -1366,7 +1374,7 @@ class CaixasController extends AppController {
 
             $column_chart->options(array('width' => '80%',
                 'heigth' => '70%',
-                'title' => 'Relatório Valor Total x Categorias pai',
+                'title' => 'Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                 'titleTextStyle' => array('color' => 'grenn'),
                 'fontSize' => 12,
@@ -1494,7 +1502,7 @@ class CaixasController extends AppController {
 
             $column_chart_linha->options(array('width' => '80%',
                 'heigth' => '70%',
-                'title' => 'Relatório Valor Total x Categorias pai',
+                'title' => 'Valor x Categorias',
 //            'colors' => array('#1b9e77', '#d95f02', '#7570b3', '#333222', '#999999'),
                 'titleTextStyle' => array('color' => 'grenn'),
                 'fontSize' => 12,
@@ -1732,7 +1740,6 @@ class CaixasController extends AppController {
                                          and DATE_FORMAT(caixas.dtcaixa, ' . "'%Y-%m'" . ') BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . "'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . "'" . '
                                          and caixas.empresa_id = ' . $empresa_id . '
                                          and lancamentos.categoria_id = categorias.id
-                                         and categorias.ativo = ' . "'S'" . '
                                        group by SUBSTR(caixas.dtcaixa, 1, 4), SUBSTR(caixas.dtcaixa, 6, 2)
                                        order by SUBSTR(caixas.dtcaixa, 1, 4) asc, SUBSTR(caixas.dtcaixa, 6, 2) asc');
 
@@ -1756,7 +1763,6 @@ class CaixasController extends AppController {
                                                   and DATE_FORMAT(caixas.dtcaixa, ' . "'%m-%Y'" . ') = ' . "'" . $data[0]['mes'] . '-' . $data[0]['ano'] . "'" . '
                                                   and caixas.empresa_id = ' . $empresa_id . '
                                                   and lancamentos.categoria_id = categorias.id
-                                                  and categorias.ativo = ' . "'S'" . '
                                                 group by SUBSTR(caixas.dtcaixa, 1, 4), SUBSTR(caixas.dtcaixa, 6, 2), categorias.tipo
                                                 order by SUBSTR(caixas.dtcaixa, 1, 4) asc, SUBSTR(caixas.dtcaixa, 6, 2) asc, ordem asc');
 
@@ -1822,7 +1828,6 @@ class CaixasController extends AppController {
                                          and DATE_FORMAT(caixas.dtcaixa, ' . "'%Y-%m'" . ') BETWEEN ' . "'" . substr($indices['Relatorio']['dtdespesa_inicio'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_inicio'], 0, 2) . "'" . ' AND ' . "'" . substr($indices['Relatorio']['dtdespesa_fim'], 3, 4) . '-' . substr($indices['Relatorio']['dtdespesa_fim'], 0, 2) . "'" . '
                                          and caixas.empresa_id = ' . $empresa_id . '
                                          and lancamentos.categoria_id = categorias.id
-                                         and categorias.ativo = ' . "'S'" . '
                                        group by SUBSTR(caixas.dtcaixa, 1, 4), SUBSTR(caixas.dtcaixa, 6, 2)
                                        order by SUBSTR(caixas.dtcaixa, 1, 4) asc, SUBSTR(caixas.dtcaixa, 6, 2) asc');
 
@@ -1846,7 +1851,6 @@ class CaixasController extends AppController {
                                                   and DATE_FORMAT(caixas.dtcaixa, ' . "'%m-%Y'" . ') = ' . "'" . $data[0]['mes'] . '-' . $data[0]['ano'] . "'" . '
                                                   and caixas.empresa_id = ' . $empresa_id . '
                                                   and lancamentos.categoria_id = categorias.id
-                                                  and categorias.ativo = ' . "'S'" . '
                                                 group by SUBSTR(caixas.dtcaixa, 1, 4), SUBSTR(caixas.dtcaixa, 6, 2), categorias.tipo
                                                 order by SUBSTR(caixas.dtcaixa, 1, 4) asc, SUBSTR(caixas.dtcaixa, 6, 2) asc, ordem asc');
 
